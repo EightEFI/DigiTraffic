@@ -343,45 +343,49 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
     @property
     def state(self) -> Any:
         data = self.coordinator.data or {}
+        _LOGGER.debug("Getting state for %s, data keys: %s", self.measure_key, list(data.keys()))
+        
         # Try sensor constants first (some keys like VVAPAAS may be constants)
         sc = data.get("sensor_constants") or {}
         vals = sc.get("sensorConstantValues") if isinstance(sc, dict) else None
         if vals:
             for v in vals:
                 if v.get("name") == self.measure_key:
+                    value = v.get("value")
+                    _LOGGER.debug("Found constant value for %s: %s", self.measure_key, value)
                     # Return numeric constant value as-is (int/float)
-                    return v.get("value")
+                    return value
 
         # Next try station measurements if coordinator provides them under 'measurements'
         measurements = data.get("measurements") or {}
+        _LOGGER.debug("Measurements available: %s", list(measurements.keys()) if isinstance(measurements, dict) else "None")
+        
         if isinstance(measurements, dict) and self.measure_key in measurements:
             m = measurements.get(self.measure_key)
             if isinstance(m, dict) and "value" in m:
-                return m.get("value")
+                value = m.get("value")
+                _LOGGER.debug("Found measurement value for %s: %s", self.measure_key, value)
+                return value
             # If measurement entry is a raw value, return it (numeric)
+            _LOGGER.debug("Found raw measurement for %s: %s", self.measure_key, m)
             return m
 
-        # No data available yet
+        # Check if there's a close match (sometimes the API returns slightly different keys)
+        if isinstance(measurements, dict):
+            for key, measurement in measurements.items():
+                if self.measure_key.lower() in key.lower() or key.lower() in self.measure_key.lower():
+                    if isinstance(measurement, dict) and "value" in measurement:
+                        value = measurement.get("value")
+                        _LOGGER.debug("Found fuzzy match %s -> %s: %s", self.measure_key, key, value)
+                        return value
+
+        _LOGGER.debug("No data found for %s", self.measure_key)
+        # Return unavailable state instead of None to distinguish from "no data yet"
         return None
 
-    @property
-    def available(self) -> bool:
-        return self.coordinator.last_update_success
+    @property\n    def available(self) -> bool:\n        \"\"\"Return if entity is available.\"\"\"\n        # Sensor is available if coordinator is successful AND we have data for this measurement\n        if not self.coordinator.last_update_success:\n            return False\n            \n        # Check if we have actual measurement data\n        data = self.coordinator.data or {}\n        measurements = data.get(\"measurements\") or {}\n        sensor_constants = data.get(\"sensor_constants\") or {}\n        \n        # Available if we have either measurement data or sensor constant data\n        has_measurement = isinstance(measurements, dict) and self.measure_key in measurements\n        has_constant = False\n        if isinstance(sensor_constants, dict):\n            vals = sensor_constants.get(\"sensorConstantValues\", [])\n            has_constant = any(v.get(\"name\") == self.measure_key for v in vals)\n            \n        return has_measurement or has_constant"
 
-    @property
-    def native_unit_of_measurement(self) -> str | None:
-        """Return the unit of measurement from coordinator data."""
-        data = self.coordinator.data or {}
-        measurements = data.get("measurements") or {}
-        if isinstance(measurements, dict) and self.measure_key in measurements:
-            m = measurements.get(self.measure_key)
-            if isinstance(m, dict) and "unit" in m:
-                unit = m.get("unit")
-                # Handle special unit cases (°, km/h, %, kpl/h)
-                if unit == "***":
-                    return "%"  # Common placeholder for percentage
-                return unit
-        return None
+    @property\n    def native_unit_of_measurement(self) -> str | None:\n        \"\"\"Return the unit of measurement from coordinator data.\"\"\"\n        data = self.coordinator.data or {}\n        measurements = data.get(\"measurements\") or {}\n        if isinstance(measurements, dict) and self.measure_key in measurements:\n            m = measurements.get(self.measure_key)\n            if isinstance(m, dict) and \"unit\" in m:\n                unit = m.get(\"unit\")\n                _LOGGER.debug(\"Unit for %s: %s\", self.measure_key, unit)\n                # Handle special unit cases (°, km/h, %, kpl/h)\n                if unit == \"***\":\n                    return \"%\"  # Common placeholder for percentage\n                # For speed measurements, ensure we have km/h\n                if \"KESKINOPEUS\" in self.measure_key and unit in [\"km/h\", \"kmh\", \"km\"]:\n                    return \"km/h\"\n                return unit\n                \n        # Default units based on measurement type\n        if \"KESKINOPEUS\" in self.measure_key:\n            return \"km/h\"\n        elif \"OHITUKSET\" in self.measure_key:\n            return \"count\"\n        elif \"VVAPAAS\" in self.measure_key:\n            return \"%\"\n            \n        return None"
 
     @property
     def icon(self) -> str:
