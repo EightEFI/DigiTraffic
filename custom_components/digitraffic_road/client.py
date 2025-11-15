@@ -286,7 +286,7 @@ class DigitraficClient:
             return None
 
     async def get_forecast(self, section_id: str, language: str = "fi") -> Optional[Dict[str, Any]]:
-        """Fetch 12h forecast for a specific road section."""
+        """Fetch forecast for a specific road section."""
         try:
             _LOGGER.debug("Fetching forecast for section: %s", section_id)
             

@@ -94,7 +94,7 @@ class DigitraficCurrentConditionsSensor(CoordinatorEntity, SensorEntity):
 
 
 class DigitraficForecastSensor(CoordinatorEntity, SensorEntity):
-    """Sensor for 12h road conditions forecast."""
+    """Sensor for road condition forecast."""
 
     def __init__(
         self, 
@@ -107,7 +107,7 @@ class DigitraficForecastSensor(CoordinatorEntity, SensorEntity):
         self.section_id = section_id
         self._section_name = section_name
         self._attr_unique_id = f"{DOMAIN}_{section_id}_forecast"
-        self._attr_name = f"{section_name} - 12h Forecast"
+        self._attr_name = f"{section_name} - Forecast"
 
     @property
     def state(self) -> str | None:
@@ -132,7 +132,7 @@ class DigitraficForecastSensor(CoordinatorEntity, SensorEntity):
         if forecast_data and forecast_data.get("features"):
             # Include detailed forecast data as attributes
             forecasts = []
-            for forecast in forecast_data["features"][:12]:
+            for forecast in forecast_data["features"]:
                 properties = forecast.get("properties", {})
                 forecasts.append({
                     "time": properties.get("time"),

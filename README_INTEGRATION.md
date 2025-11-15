@@ -1,63 +1,6 @@
-# Digitraffic Road Conditions Integration
+This file has been deprecated and its content moved into `README.md`.
 
-A custom Home Assistant integration that fetches real-time road condition data from the Finnish Digitraffic service (https://www.digitraffic.fi/).
-
-## Features
-
-- **Real-time road conditions**: Get current driving conditions for your selected road section
-- **12-hour forecast**: View weather and road condition forecasts for the next 12 hours
-- **Multiple road sections**: Add multiple instances to monitor different road sections
-- **Automatic updates**: Data refreshes every 5 minutes (configurable)
-- **Reliability indicator**: Shows data reliability percentage for informed decision making
-
-## Installation
-
-### Via HACS
-
-1. Open HACS in Home Assistant
-2. Click on "Custom repositories"
-3. Add `https://github.com/EightEFI/Digitraffic-road-conditions` as repository with category "Integration"
-4. Click "Install"
-5. Restart Home Assistant
-
-### Manual Installation
-
-1. Copy the `digitraffic_road` folder to `custom_components/` in your Home Assistant configuration directory
-2. Restart Home Assistant
-
-## Configuration
-
-### Adding the Integration
-
-1. Go to **Settings** → **Devices & Services** → **Integrations**
-2. Click **Create Integration** and search for "Digitraffic Road Conditions"
-3. Select your desired road section from the available options
-4. The integration will create two entities:
-   - **Current Conditions**: Shows the current road conditions in text format
-   - **12h Forecast**: Shows the road condition forecast for the next 12 hours
-
-## Entities
-
-### Sensor: Current Conditions
-- **Entity ID**: `sensor.<section_name>_current_conditions`
-- **State**: Current road condition text
-- **Attributes**:
-  - `reliability`: Data reliability percentage (0-100)
-  - `last_updated`: Last update timestamp from the API
-
-### Sensor: 12h Forecast
-- **Entity ID**: `sensor.<section_name>_12h_forecast`
-- **State**: Multi-line forecast text
-- **Attributes**:
-  - `forecast_data`: Structured forecast data with time and condition for each hour
-
-## Available Road Sections
-
-Road sections are fetched from the Digitraffic service. Currently available sections include:
-- E18 Helsinki - Espoo
-- E75 Helsinki - Turku
-- VT1 Helsinki - Tampere
-- VT4 Tampere - Oulu
+The integration no longer refers to a "12h forecast"; the component exposes a time-stamped "Forecast" sensor. See `README.md` for up-to-date documentation and examples.
 
 Additional sections are constantly being added as more areas are covered by monitoring.
 
@@ -98,7 +41,7 @@ Use the Entities card or a custom template card to display road conditions:
 type: entities
 entities:
   - entity: sensor.e18_current_conditions
-  - entity: sensor.e18_12h_forecast
+  - entity: sensor.e18_forecast
 title: Road Conditions
 ```
 

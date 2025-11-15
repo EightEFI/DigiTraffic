@@ -4,6 +4,11 @@ DOMAIN = "digitraffic_road"
 CONF_ROAD_SECTION = "road_section"
 CONF_ROAD_SECTION_ID = "road_section_id"
 CONF_LANGUAGE = "language"
+CONF_MONITOR_TYPE = "monitor_type"
+CONF_TMS_ID = "tms_id"
+
+MONITOR_CONDITIONS = "conditions"
+MONITOR_TMS = "tms"
 
 UPDATE_INTERVAL = 300  # Update every 5 minutes
 

@@ -5,7 +5,7 @@ A custom Home Assistant integration that fetches real-time road condition data f
 ## Features
 
 - **Real-time road conditions**: Get current driving conditions for your selected road section
-- **12-hour forecast**: View weather and road condition forecasts for the next 12 hours
+-- **Forecast**: View weather and road condition forecasts (time-specific entries)
 - **Multiple road sections**: Add multiple instances to monitor different road sections
 - **Automatic updates**: Data refreshes every 5 minutes (configurable)
 - **Reliability indicator**: Shows data reliability percentage for informed decision making
@@ -36,9 +36,9 @@ A custom Home Assistant integration that fetches real-time road condition data f
 4. Click on any specific road section you want to monitor
 5. Copy the exact title shown (e.g., "Tie 4: Kemintie 4.421")
 6. Paste it into the integration setup form
-7. The integration will create two entities for this specific section:
+6. The integration will create two entities for this specific section:
    - **Current Conditions**: Shows the current road conditions in Finnish
-   - **12h Forecast**: Shows the road condition forecast for the next 12 hours
+  - **Forecast**: Shows the road condition forecast with time-stamped entries
 
 ## Entities
 
@@ -49,8 +49,8 @@ A custom Home Assistant integration that fetches real-time road condition data f
   - `reliability`: Data reliability percentage (0-100)
   - `last_updated`: Last update timestamp from the API
 
-### Sensor: 12h Forecast
-- **Entity ID**: `sensor.<section_name>_12h_forecast`
+-### Sensor: Forecast
+- **Entity ID**: `sensor.<section_name>_forecast`
 - **State**: Multi-line forecast showing times and Finnish road conditions
 - **Attributes**:
   - `forecast_data`: Structured forecast data with time and condition
@@ -130,7 +130,7 @@ Display road conditions on your dashboard:
 type: entities
 entities:
   - entity: sensor.kemintie_current_conditions
-  - entity: sensor.kemintie_12h_forecast
+  - entity: sensor.kemintie_forecast
 title: Road Conditions - Kemintie
 ```
 

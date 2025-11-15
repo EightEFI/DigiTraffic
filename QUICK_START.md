@@ -44,7 +44,7 @@ The integration features a powerful search system to find exact road sections:
 | Entity | Description |
 |--------|-------------|
 | `sensor.*_current_conditions` | Real-time driving conditions text |
-| `sensor.*_12h_forecast` | 12-hour weather/road forecast |
+| `sensor.*_forecast` | Time-stamped weather/road forecast |
 
 ## Example Automation
 

@@ -43,7 +43,7 @@ Digitraffic-road-conditions/
 
 ### 2. **Entities Created**
 - **Sensor: Current Conditions** - Shows text description of current road conditions
-- **Sensor: 12h Forecast** - Shows multi-line forecast with hourly conditions
+- **Sensor: Forecast** - Shows multi-line forecast with time-stamped conditions
 
 ### 3. **Attributes**
 - Current conditions include reliability percentage and last update time
@@ -97,7 +97,7 @@ After installation, add the integration through the Home Assistant UI:
 The integration creates two sensors:
 
 - `sensor.<road_section_name>_current_conditions` - Current conditions text
-- `sensor.<road_section_name>_12h_forecast` - 12-hour forecast text
+- `sensor.<road_section_name>_forecast` - Forecast text (time-stamped entries)
 
 Use these entities in automations, templates, or dashboard cards:
 

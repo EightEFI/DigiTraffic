@@ -100,7 +100,7 @@ UPDATE_INTERVAL = 300  # Change to desired seconds
   - Returns: GeoJSON with current conditions
   
 - **Forecast**: `GET /api/v3/road-conditions/road-sections/{sectionId}/forecast`
-  - Returns: GeoJSON with 12h forecast
+   - Returns: GeoJSON with time-stamped forecast entries
 
 ### Response Format
 
