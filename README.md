@@ -2,6 +2,16 @@
 
 A Home Assistant custom integration that provides real-time road conditions and traffic data from Finland's Digitraffic service (https://www.digitraffic.fi/).
 
+## Quick Start
+
+Before setting up the integration, find the road section or traffic station you want to monitor:
+
+1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
+2. **For Road Conditions**: Click on any road section (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250")
+3. **For Traffic Stations (LAM/TMS)**: Look for the camera/measurement icons on the map, click them, and note the station name (e.g., "vt4 Simo Saukkoranta")
+
+Keep this information ready - you'll need it during the integration setup!
+
 ## Features
 
 ### 🚗 Road Conditions Monitoring
@@ -48,11 +58,7 @@ A Home Assistant custom integration that provides real-time road conditions and 
 2. Search for "**DigiTraffic**"
 3. **Select Language**: Choose Finnish or English
 4. **Choose Type**: Select "Ajokeli tieosuudella" (Road conditions)
-5. **Find Your Road Section**:
-   - Open [Fintraffic road conditions map](https://liikennetilanne.fintraffic.fi/kartta/)
-   - Click on any road section to see its details
-   - Copy the title shown (e.g., "Tie 3: Valtatie 3 3.250")
-   - Paste into the integration setup
+5. **Enter Road Section**: Paste the road section title you copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "Tie 3: Valtatie 3 3.250")
 6. If multiple matches are found, select the exact section from the dropdown
 
 The integration will create two entities:
@@ -65,7 +71,7 @@ The integration will create two entities:
 2. Search for "**DigiTraffic**"
 3. **Select Language**: Choose Finnish or English
 4. **Choose Type**: Select "Liikenteen automaattinen mittausasema (LAM)"
-5. **Search for Station**: Enter road name and location (e.g., "Tie 3 Vaasa")
+5. **Enter Station Name**: Type the station name you noted from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt4 Simo Saukkoranta")
 6. Select the desired station from search results
 
 The integration creates multiple sensors per station:
