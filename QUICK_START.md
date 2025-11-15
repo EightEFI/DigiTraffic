@@ -16,7 +16,28 @@
 
 ## Configuration
 
-During setup, you'll be prompted to select a road section. The integration automatically fetches available sections from the Digitraffic API.
+### Searching for Road Sections
+
+The integration features a powerful search system to find exact road sections:
+
+1. When adding the integration, you'll be prompted to **search** for a road section
+2. You can search by:
+   - **Road number**: E18, E75, VT1, VT4, ST101, ST105, etc.
+   - **Location name**: Perämerentie, Hämeentie, Helsinki, Tampere, etc.
+   - **Area description**: "Espoo area", "Oulu direction", etc.
+   - **Partial matches**: Just type part of the name (case-insensitive)
+
+### Search Examples:
+- "**E18**" → All E18 sections
+- "**Perämerentie**" → VT4: Perämerentie [50.0-130.0]
+- "**Helsinki**" → All sections in Helsinki area
+- "**VT4**" → All VT4 sections with KM markers
+
+### Setup Process:
+1. Enter search term (e.g., "VT4" or "Perämerentie")
+2. View matching sections with road number, KM range, and location
+3. Select the specific section you want to monitor
+4. Integration creates sensors automatically
 
 ## Entities Created
 

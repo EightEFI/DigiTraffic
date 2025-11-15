@@ -18,64 +18,104 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
-        """Handle the initial step."""
+        """Handle the initial step - search for road section."""
         errors = {}
-        road_sections = []
-
-        # Try to fetch road sections
-        try:
-            session = async_get_clientsession(self.hass)
-            client = DigitraficClient(session)
-            sections_data = await client.get_road_sections()
-            
-            # Extract road section names from GeoJSON features
-            for feature in sections_data:
-                properties = feature.get("properties", {})
-                section_id = properties.get("id", "")
-                section_name = properties.get("name", section_id)
-                if section_id:
-                    road_sections.append((section_id, section_name))
-            
-            road_sections.sort(key=lambda x: x[1])
-        except Exception as err:
-            _LOGGER.error("Error fetching road sections: %s", err)
-            errors["base"] = "cannot_connect"
-
+        session = async_get_clientsession(self.hass)
+        client = DigitraficClient(session)
+        
+        # If user submitted search query
         if user_input is not None:
-            section_id = user_input.get(CONF_ROAD_SECTION_ID)
-            section_name = next(
-                (name for sid, name in road_sections if sid == section_id),
-                section_id
-            )
+            search_query = user_input.get("search_query", "").strip()
             
-            # Check if already configured
-            await self.async_set_unique_id(section_id)
-            self._abort_if_unique_id_configured()
-            
-            return self.async_create_entry(
-                title=section_name,
-                data={
-                    CONF_ROAD_SECTION_ID: section_id,
-                    CONF_ROAD_SECTION: section_name,
-                },
-            )
-
-        if not road_sections:
-            return self.async_abort(reason="cannot_connect")
-
-        schema = vol.Schema(
-            {
-                vol.Required(CONF_ROAD_SECTION_ID): vol.In(
-                    {section_id: section_name for section_id, section_name in road_sections}
-                ),
-            }
-        )
-
+            if not search_query:
+                errors["base"] = "empty_search"
+            else:
+                _LOGGER.debug("Searching for road sections: %s", search_query)
+                
+                # Search for matching road sections
+                matching_sections = await client.search_road_sections(search_query)
+                
+                _LOGGER.debug("Found %d matching sections", len(matching_sections))
+                
+                if matching_sections:
+                    # Store search results and go to selection step
+                    self.search_results = matching_sections
+                    return await self.async_step_select()
+                else:
+                    errors["base"] = "no_results"
+        
+        # Show search form
         return self.async_show_form(
             step_id="user",
-            data_schema=schema,
+            data_schema=vol.Schema(
+                {
+                    vol.Required("search_query"): str,
+                }
+            ),
             errors=errors,
-            description_placeholders={},
+            description_placeholders={
+                "examples": "E18, VT4, Perämerentie, Hämeentie"
+            },
+        )
+
+    async def async_step_select(self, user_input=None):
+        """Select specific road section from search results."""
+        if user_input is not None:
+            section_id = user_input.get("road_section_id")
+            
+            # Find the selected section in results
+            selected_section = next(
+                (s for s in self.search_results if s["id"] == section_id),
+                None
+            )
+            
+            if selected_section:
+                # Check if already configured
+                await self.async_set_unique_id(section_id)
+                self._abort_if_unique_id_configured()
+                
+                section_name = selected_section.get("name", section_id)
+                _LOGGER.debug("Creating config entry for section: %s", section_id)
+                
+                return self.async_create_entry(
+                    title=section_name,
+                    data={
+                        CONF_ROAD_SECTION_ID: section_id,
+                        CONF_ROAD_SECTION: section_name,
+                    },
+                )
+        
+        # Build selection dictionary with full details
+        section_choices = {}
+        for section in self.search_results:
+            section_id = section.get("id")
+            name = section.get("name")
+            road = section.get("road", "")
+            km = section.get("km", "")
+            location = section.get("location", "")
+            description = section.get("description", "")
+            
+            # Build detailed display name
+            display_name = f"{name}"
+            if km:
+                display_name += f" [{km}]"
+            if description:
+                display_name += f" - {description}"
+            
+            section_choices[section_id] = display_name
+        
+        schema = vol.Schema(
+            {
+                vol.Required("road_section_id"): vol.In(section_choices),
+            }
+        )
+        
+        return self.async_show_form(
+            step_id="select",
+            data_schema=schema,
+            description_placeholders={
+                "found_count": str(len(self.search_results))
+            },
         )
 
     @staticmethod

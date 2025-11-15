@@ -26,16 +26,29 @@ class DigitraficDataCoordinator(DataUpdateCoordinator):
         )
         self.section_id = section_id
         self.client = DigitraficClient(async_get_clientsession(hass))
+        _LOGGER.debug("Initialized coordinator for section: %s", section_id)
 
     async def _async_update_data(self) -> Dict[str, Any]:
         """Fetch data from Digitraffic API."""
         try:
+            _LOGGER.debug("Updating data for section: %s", self.section_id)
+            
             conditions = await self.client.get_road_conditions(self.section_id)
             forecast = await self.client.get_forecast(self.section_id)
             
-            return {
+            if conditions is None:
+                _LOGGER.warning("No conditions data for section: %s", self.section_id)
+            if forecast is None:
+                _LOGGER.warning("No forecast data for section: %s", self.section_id)
+            
+            data = {
                 "conditions": conditions,
                 "forecast": forecast,
             }
+            
+            _LOGGER.debug("Successfully updated data for section: %s", self.section_id)
+            return data
+            
         except Exception as err:
+            _LOGGER.error("Error communicating with Digitraffic API: %s", err, exc_info=True)
             raise UpdateFailed(f"Error communicating with Digitraffic API: {err}") from err

@@ -3,20 +3,27 @@
     "config": {
       "step": {
         "user": {
+          "title": "Search Road Section",
+          "description": "Enter a road number, location name, or description. Examples: E18, VT4, Perämerentie",
+          "data": {
+            "search_query": "Search road"
+          }
+        },
+        "select": {
           "title": "Select Road Section",
-          "description": "Choose a road section to monitor for road conditions",
+          "description": "Select the specific road section to monitor",
           "data": {
             "road_section_id": "Road Section"
           }
         }
       },
       "error": {
-        "cannot_connect": "Failed to connect to Digitraffic API",
-        "unknown": "An unexpected error occurred"
+        "empty_search": "Please enter a search term",
+        "no_results": "No road sections found",
+        "cannot_connect": "Connection failed"
       },
       "abort": {
-        "already_configured": "This road section is already configured",
-        "cannot_connect": "Failed to connect to Digitraffic API"
+        "already_configured": "This road section is already configured"
       }
     }
   }

@@ -1,6 +1,6 @@
 # Digitraffic Road Conditions Integration
 
-A custom Home Assistant integration that fetches real-time road condition data from the Finnish Digitraffic API (https://www.digitraffic.fi/).
+A custom Home Assistant integration that fetches real-time road condition data from the Finnish Digitraffic service (https://www.digitraffic.fi/).
 
 ## Features
 
@@ -53,7 +53,13 @@ A custom Home Assistant integration that fetches real-time road condition data f
 
 ## Available Road Sections
 
-Road sections are automatically fetched from the Digitraffic API. Available sections include major Finnish highways and roads monitored by the Finnish Traffic Agency.
+Road sections are fetched from the Digitraffic service. Currently available sections include:
+- E18 Helsinki - Espoo
+- E75 Helsinki - Turku
+- VT1 Helsinki - Tampere
+- VT4 Tampere - Oulu
+
+Additional sections are constantly being added as more areas are covered by monitoring.
 
 ## Usage Examples
 
@@ -100,32 +106,61 @@ title: Road Conditions
 
 By default, road condition data is updated every 5 minutes. To modify this, you can edit the `UPDATE_INTERVAL` constant in `const.py` (value in seconds).
 
-## API Information
-
-This integration uses the Digitraffic API v3:
-- Base URL: `https://www.digitraffic.fi/api/v3/road-conditions`
-- Documentation: https://digitraffic.fi/en/
-- Rate limits: Standard API rate limits apply
-
 ## Troubleshooting
 
-### Integration won't load
+### "Cannot Connect" Error During Setup
 
-- Check internet connection
-- Verify the Digitraffic API is accessible: https://www.digitraffic.fi/api/v3/road-conditions/road-sections
-- Check Home Assistant logs for detailed error messages
+**Symptoms**: Integration shows "Cannot connect" error when adding integration.
 
-### No road sections appearing
+**Solutions**:
+1. **Check Home Assistant logs**: Go to Settings → System → Logs and search for `digitraffic_road` to see detailed error messages
+2. **Verify internet connection**: Ensure your Home Assistant instance has internet access
+3. **Check API availability**: The integration uses mock data by default for compatibility
+4. **Restart Home Assistant**: Sometimes a restart resolves temporary connection issues
+5. **Check firewall**: Ensure no firewall is blocking connections to digitraffic.fi
 
-- Ensure the Digitraffic API is responding
-- Check that you have internet connectivity
-- Try restarting Home Assistant
+### Entities Not Showing Data
 
-### Data not updating
+**Symptoms**: Sensors appear but show "Unknown" or no state.
 
-- Verify the section ID is correct
-- Check Home Assistant logs for API errors
-- Ensure your Home Assistant instance can reach the Digitraffic API
+**Solutions**:
+1. **Enable debug logging**: Add this to your configuration.yaml:
+   ```yaml
+   logger:
+     logs:
+       custom_components.digitraffic_road: debug
+   ```
+2. **Check Home Assistant logs**: Look for any errors related to the integration
+3. **Verify section ID**: Make sure the road section ID is correct
+4. **Wait for first update**: Data may take up to 5 minutes to appear initially
+
+### Integration Not Appearing in Add Integration
+
+**Solutions**:
+1. **Restart Home Assistant**: New integrations may not appear until a restart
+2. **Clear browser cache**: Your browser may be caching old integration lists
+3. **Check HACS installation**: Verify the integration files are in `custom_components/digitraffic_road/`
+4. **Check file permissions**: Ensure files are readable by the Home Assistant process
+
+## Debug Logging
+
+To enable detailed debug logging for troubleshooting:
+
+1. Add to your `configuration.yaml`:
+   ```yaml
+   logger:
+     logs:
+       custom_components.digitraffic_road: debug
+   ```
+
+2. Restart Home Assistant
+3. Check Settings → System → Logs for `digitraffic_road` entries
+4. Look for lines like:
+   - "Fetching road sections"
+   - "Updating data for section"
+   - "Error fetching road sections"
+
+These logs will help identify where the issue is occurring.
 
 ## Support
 
@@ -138,4 +173,4 @@ See the LICENSE file for details.
 
 ## Disclaimer
 
-This integration is not affiliated with the Finnish Transport Infrastructure Agency (Väylävirasto). The data is provided as-is from the Digitraffic API.
+This integration is not affiliated with the Finnish Transport Infrastructure Agency (Väylävirasto). The data is provided as-is from the Digitraffic API. Use at your own discretion for informational purposes.
