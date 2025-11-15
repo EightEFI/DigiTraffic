@@ -203,26 +203,40 @@ template:
           {% endif %}
 ```
 
-### Dashboard Card
+### Dashboard Card with ApexChart Card
 
 ```yaml
-type: vertical-stack
-cards:
-  - type: entities
-    title: VT3 Road Conditions
-    entities:
-      - entity: sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä
-        name: Current
-      - type: attribute
-        entity: sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä
-        attribute: reliability
-        name: Reliability
-        suffix: "%"
-  
-  - type: markdown
-    content: |
-      ## 6-Hour Forecast
-      {{ states('sensor.valtatie_3_3_250_ennuste') }}
+type: custom:apexcharts-card
+graph_span: 72hours
+header:
+  show: true
+  title: 5 minute rolling average speed
+  show_states: true
+  colorize_states: true
+apex_config:
+  legend:
+    show: false
+hours_12: false
+experimental:
+  color_threshold: true
+show:
+  last_updated: true
+series:
+  - entity: sensor.vt4_marostenmaki_keskinopeus_5min_liukuva_suunta1
+    type: line
+    stroke_width: 2
+    unit: "km/h"
+    name: Direction 1
+    show:
+      legend_value: false
+  - entity: sensor.vt4_marostenmaki_keskinopeus_5min_liukuva_suunta2
+    type: line
+    stroke_width: 2
+    unit: "km/h"
+    name: Direction 2
+    show:
+      legend_value: false
+
 ```
 
 ## Technical Details
