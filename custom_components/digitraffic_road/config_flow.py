@@ -53,6 +53,15 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return await self.async_step_tms()
             return await self.async_step_section()
 
+        # Set labels based on selected language
+        language = getattr(self, "language", "fi")
+        if language == "fi":
+            conditions_label = "Ajokeli tieosuudella"
+            tms_label = "Liikenteen automaattinen mittausasema (LAM)"
+        else:
+            conditions_label = "Driving condition in a road section"
+            tms_label = "Traffic measuring station (TMS)"
+
         return self.async_show_form(
             step_id="monitor_type",
             data_schema=vol.Schema(
@@ -60,7 +69,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         "monitor_type",
                         default=MONITOR_CONDITIONS,
-                    ): vol.In({MONITOR_CONDITIONS: "Ajokeli / Driving conditions", MONITOR_TMS: "TMS / Traffic measuring station"}),
+                    ): vol.In({MONITOR_CONDITIONS: conditions_label, MONITOR_TMS: tms_label}),
                 }
             ),
         )

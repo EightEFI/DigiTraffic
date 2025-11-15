@@ -13,6 +13,9 @@
         "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
         "data": {
           "monitor_type": "Seurattava tyyppi"
+        },
+        "data_description": {
+          "monitor_type": "Ajokeli tieosuudella tai Liikenteen automaattinen mittausasema (LAM)"
         }
       },
       "section": {
