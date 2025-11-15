@@ -100,7 +100,7 @@ class DigitraficCurrentConditionsSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = f"{section_name} - Current Conditions"
 
     @property
-    def state(self) -> str | None:
+    def state(self) -> Any:
         """Return the state of the sensor."""
         if not self.coordinator.data:
             return None
@@ -314,6 +314,7 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
         if vals:
             for v in vals:
                 if v.get("name") == self.measure_key:
+                    # Return numeric constant value as-is (int/float)
                     return v.get("value")
 
         # Next try station measurements if coordinator provides them under 'measurements'
@@ -321,9 +322,9 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
         if isinstance(measurements, dict) and self.measure_key in measurements:
             m = measurements.get(self.measure_key)
             if isinstance(m, dict) and "value" in m:
-                val = m.get("value")
-                return str(val) if val is not None else None
-            return str(m) if m is not None else None
+                return m.get("value")
+            # If measurement entry is a raw value, return it
+            return m
 
         # No data available yet
         return None
