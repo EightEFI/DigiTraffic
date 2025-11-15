@@ -1,0 +1,23 @@
+{
+  "en": {
+    "config": {
+      "step": {
+        "user": {
+          "title": "Select Road Section",
+          "description": "Choose a road section to monitor for road conditions",
+          "data": {
+            "road_section_id": "Road Section"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Failed to connect to Digitraffic API",
+        "unknown": "An unexpected error occurred"
+      },
+      "abort": {
+        "already_configured": "This road section is already configured",
+        "cannot_connect": "Failed to connect to Digitraffic API"
+      }
+    }
+  }
+}

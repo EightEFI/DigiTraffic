@@ -1,0 +1,11 @@
+{
+  "domain": "digitraffic_road",
+  "name": "Digitraffic Road Conditions",
+  "codeowners": ["@EightEFI"],
+  "config_flow": true,
+  "documentation": "https://github.com/EightEFI/Digitraffic-road-conditions",
+  "requirements": ["aiohttp>=3.8.0"],
+  "version": "1.0.0",
+  "homeassistant": "2023.12.0",
+  "issue_tracker": "https://github.com/EightEFI/Digitraffic-road-conditions/issues"
+}
