@@ -4,7 +4,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, CONF_ROAD_SECTION_ID, CONF_LANGUAGE
+from .const import DOMAIN, CONF_ROAD_SECTION_ID, CONF_TMS_ID, CONF_LANGUAGE
 from .coordinator import DigitraficDataCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,8 +16,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up DigiTraffic from a config entry."""
     hass.data.setdefault(DOMAIN, {})
     
-    section_id = entry.data[CONF_ROAD_SECTION_ID]
+    # Support both road-section based entries and TMS-based entries.
+    section_id = entry.data.get(CONF_ROAD_SECTION_ID) or entry.data.get(CONF_TMS_ID)
     language = entry.data.get(CONF_LANGUAGE, "fi")
+
+    if section_id is None:
+        _LOGGER.error("Config entry %s missing section id and tms id", entry.entry_id)
+        return False
 
     # Create and setup coordinator
     coordinator = DigitraficDataCoordinator(hass, section_id, language)
