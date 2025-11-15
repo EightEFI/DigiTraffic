@@ -38,11 +38,31 @@ class DigitraficDataCoordinator(DataUpdateCoordinator):
             if str(self.section_id).isdigit():
                 station = await self.client.async_get_tms_station(int(self.section_id))
                 sensor_constants = await self.client.async_get_tms_sensor_constants(int(self.section_id))
-                if station is None:
+                tms_data = await self.client.async_get_tms_station_data(int(self.section_id))
+
+                measurements = {}
+                # Convert sensorValues list into a name -> value mapping for sensors
+                if tms_data and isinstance(tms_data, dict):
+                    for sv in tms_data.get("sensorValues", []):
+                        name = sv.get("name")
+                        if not name:
+                            continue
+                        measurements[name] = {
+                            "id": sv.get("id"),
+                            "value": sv.get("value"),
+                            "unit": sv.get("unit"),
+                            "measuredTime": sv.get("measuredTime"),
+                            "timeWindowStart": sv.get("timeWindowStart"),
+                            "timeWindowEnd": sv.get("timeWindowEnd"),
+                        }
+
+                if station is None and not measurements:
                     _LOGGER.warning("No TMS station data for id: %s", self.section_id)
+
                 data = {
                     "tms_station": station,
                     "sensor_constants": sensor_constants,
+                    "measurements": measurements,
                 }
             else:
                 conditions = await self.client.get_road_conditions(self.section_id, language=self.language)

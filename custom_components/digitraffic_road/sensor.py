@@ -267,7 +267,11 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
         # Next try station measurements if coordinator provides them under 'measurements'
         measurements = data.get("measurements") or {}
         if isinstance(measurements, dict) and self.measure_key in measurements:
-            return measurements.get(self.measure_key)
+            m = measurements.get(self.measure_key)
+            if isinstance(m, dict) and "value" in m:
+                val = m.get("value")
+                return str(val) if val is not None else None
+            return str(m) if m is not None else None
 
         # No data available yet
         return None
