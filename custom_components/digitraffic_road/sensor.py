@@ -159,17 +159,46 @@ def format_station_name(raw: str) -> str:
     return " ".join(t.capitalize() for t in raw.split())
 
 
-def format_measurement_key(key: str) -> str:
+def format_measurement_key(key: str, language: str = "fi") -> str:
     """Format measurement key tokens according to agreed rules.
 
+    Args:
+        key: The measurement key to format.
+        language: Language code ('fi' or 'en').
+
     Rules:
-    - Keep underscores.
-    - Keep `VVAPAAS` and `MS1/MS2` uppercase.
-    - Convert `5MIN`/`60MIN` -> `5min`/`60min`.
-    - Title-case other tokens (e.g., `KESKINOPEUS` -> `Keskinopeus`, `LIUKUVA` -> `Liukuva`).
+    - Translate to English if language is 'en'.
+    - Otherwise title-case Finnish tokens.
     """
     if not key:
         return ""
+    
+    # English translations map
+    english_translations = {
+        "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA1": "Rolling avg speed 5min sliding dir 1",
+        "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA2": "Rolling avg speed 5min sliding dir 2",
+        "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA1_VVAPAAS1": "Rolling avg speed 5min pct of free-flow dir 1",
+        "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA2_VVAPAAS2": "Rolling avg speed 5min pct of free-flow dir 2",
+        "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1": "Fixed avg speed 60min dir 1",
+        "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2": "Fixed avg speed 60min dir 2",
+        "KESKINOPEUS_5MIN_KIINTEA_SUUNTA1_VVAPAAS1": "Fixed avg speed 5min pct of free-flow dir 1",
+        "KESKINOPEUS_5MIN_KIINTEA_SUUNTA2_VVAPAAS2": "Fixed avg speed 5min pct of free-flow dir 2",
+        "OHITUKSET_5MIN_LIUKUVA_SUUNTA1": "Rolling count overtakes 5min dir 1",
+        "OHITUKSET_5MIN_LIUKUVA_SUUNTA2": "Rolling count overtakes 5min dir 2",
+        "OHITUKSET_5MIN_LIUKUVA_SUUNTA1_MS1": "Rolling count overtakes 5min lane 1 dir 1",
+        "OHITUKSET_5MIN_LIUKUVA_SUUNTA2_MS2": "Rolling count overtakes 5min lane 2 dir 2",
+        "OHITUKSET_5MIN_KIINTEA_SUUNTA1_MS1": "Fixed count overtakes 5min lane 1 dir 1",
+        "OHITUKSET_5MIN_KIINTEA_SUUNTA2_MS2": "Fixed count overtakes 5min lane 2 dir 2",
+        "OHITUKSET_60MIN_KIINTEA_SUUNTA1": "Fixed count overtakes 60min dir 1",
+        "OHITUKSET_60MIN_KIINTEA_SUUNTA2": "Fixed count overtakes 60min dir 2",
+        "OHITUKSET_60MIN_KIINTEA_SUUNTA1_MS1": "Fixed count overtakes 60min lane 1 dir 1",
+        "OHITUKSET_60MIN_KIINTEA_SUUNTA2_MS2": "Fixed count overtakes 60min lane 2 dir 2",
+    }
+    
+    if language == "en" and key in english_translations:
+        return english_translations[key]
+    
+    # Finnish formatting (default)
     tokens = key.split("_")
     out = []
     for t in tokens:
@@ -303,7 +332,7 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
         self.measure_key = measure_key
         self._attr_unique_id = f"{DOMAIN}_tms_{station_id}_{measure_key}"
         # Use friendly formatting for station and measurement names
-        self._attr_name = f"{format_station_name(station_name)} - {format_measurement_key(measure_key)}"
+        self._attr_name = f"{format_station_name(station_name)} - {format_measurement_key(measure_key, coordinator.language)}"
         # Enable HA statistics and graphing
         self._attr_state_class = "measurement"
 
