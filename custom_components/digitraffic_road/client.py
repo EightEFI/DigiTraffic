@@ -8,6 +8,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # Digitraffic API endpoint
 BASE_URL = "https://tie.digitraffic.fi/api/v1/data"
+FORECAST_SECTIONS_URL = "https://tie.digitraffic.fi/api/weather/v1/forecast-sections/forecasts"
 
 # Finnish road condition descriptions
 FINNISH_ROAD_CONDITIONS = [
@@ -33,6 +34,19 @@ ENGLISH_ROAD_CONDITIONS = [
     "Good driving conditions",
     "Poor driving conditions",
 ]
+
+# Maps from API roadCondition / overallRoadCondition values to human text
+ROAD_CONDITION_MAP = {
+    "DRY": {"fi": "Tienpinta on kuiva", "en": "Road surface is dry"},
+    "WET": {"fi": "Tien pinta on märkä", "en": "Road surface is wet"},
+    "ICY": {"fi": "Tienpinnassa on paikoin jäätä", "en": "Patches of ice on the road"},
+    "POSSIBLE_RIME": {"fi": "Tienpinnassa on mahdollisesti kuuraa", "en": "Possible hoarfrost on the road"},
+    "SLIPPERY": {"fi": "Liukasta, tienpinnassa on jäätä tai lunta", "en": "Slippery, ice or snow on the road"},
+    "SNOW": {"fi": "Lumisade tai rankka vesisade", "en": "Snow or heavy rain"},
+    "HEAVY_SNOW": {"fi": "Raskas lumisade", "en": "Heavy snow"},
+    "GOOD": {"fi": "Hyvä ajokeli", "en": "Good driving conditions"},
+    "POOR": {"fi": "Huono ajokeli", "en": "Poor driving conditions"},
+}
 
 # Precise mock road sections based on Finnish road structure
 # Format: "Road Type + Number: Location + KM marker"
@@ -205,20 +219,53 @@ class DigitraficClient:
         """Fetch current road conditions for a specific section."""
         try:
             _LOGGER.debug("Fetching road conditions for section: %s", section_id)
-            
-            # Get the section name for context
+
+            # If session looks like an aiohttp session, attempt to fetch real data
+            if hasattr(self.session, "get"):
+                try:
+                    async with self.session.get(FORECAST_SECTIONS_URL) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            # Find matching forecast section by id or by matching section name
+                            for fs in data.get("forecastSections", []):
+                                # API uses numeric ids; allow user to paste either id or title
+                                if fs.get("id") == section_id or fs.get("sectionName") == section_id:
+                                    # find observation
+                                    obs = next((f for f in fs.get("forecasts", []) if f.get("type") == "OBSERVATION"), None)
+                                    if obs:
+                                        rc = obs.get("overallRoadCondition") or obs.get("forecastConditionReason", {}).get("roadCondition")
+                                        condition_text = ROAD_CONDITION_MAP.get(rc, {}).get(language, rc or "Unknown")
+                                        return {
+                                            "features": [
+                                                {
+                                                    "type": "Feature",
+                                                    "properties": {
+                                                        "id": fs.get("id"),
+                                                        "location": fs.get("sectionName", section_id),
+                                                        "condition": condition_text,
+                                                        "reliability": obs.get("reliability"),
+                                                        "last_updated": data.get("dataUpdatedTime"),
+                                                    },
+                                                    "geometry": {"type": "Point", "coordinates": [0, 0]}
+                                                }
+                                            ]
+                                        }
+                except Exception as err:
+                    _LOGGER.debug("Failed to fetch real road conditions, falling back to mock: %s", err)
+
+            # Fallback to mock data if network unavailable or no match
             section = next(
                 (s for s in MOCK_ROAD_SECTIONS if s["id"] == section_id),
                 None
             )
             location = section["location"] if section else section_id
-            
+
             # Choose language for condition descriptions
             if language == "en":
                 condition = ENGLISH_ROAD_CONDITIONS[hash(section_id) % len(ENGLISH_ROAD_CONDITIONS)]
             else:
                 condition = FINNISH_ROAD_CONDITIONS[hash(section_id) % len(FINNISH_ROAD_CONDITIONS)]
-            
+
             return {
                 "features": [
                     {
@@ -252,12 +299,47 @@ class DigitraficClient:
                 hours_to_next = 0
             start_time = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=hours_to_next)
             
+            # Try to use real API if session supports network calls
+            if hasattr(self.session, "get"):
+                try:
+                    async with self.session.get(FORECAST_SECTIONS_URL) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            # find matching forecast section
+                            for fs in data.get("forecastSections", []):
+                                if fs.get("id") == section_id or fs.get("sectionName") == section_id:
+                                    # build forecasts from API
+                                    forecasts = []
+                                    for f in fs.get("forecasts", []):
+                                        if f.get("type") == "FORECAST":
+                                            time_iso = f.get("time")
+                                            try:
+                                                dt = datetime.fromisoformat(time_iso.replace("Z", "+00:00"))
+                                                time_str = dt.strftime("%H:%M")
+                                            except Exception:
+                                                time_str = time_iso
+                                            rc = f.get("forecastConditionReason", {}).get("roadCondition") or f.get("overallRoadCondition")
+                                            condition_text = ROAD_CONDITION_MAP.get(rc, {}).get(language, rc or "Unknown")
+                                            forecasts.append({
+                                                "type": "Feature",
+                                                "properties": {
+                                                    "time": time_str,
+                                                    "condition": condition_text,
+                                                },
+                                                "geometry": {"type": "Point", "coordinates": [0, 0]}
+                                            })
+                                    return {"features": forecasts}
+                except Exception as err:
+                    _LOGGER.debug("Failed to fetch real forecast, falling back to mock: %s", err)
+
+            # Fallback to mock forecast generation
+            if language == "en":
+                condition_list = ENGLISH_ROAD_CONDITIONS
+            else:
+                condition_list = FINNISH_ROAD_CONDITIONS
             for i in range(0, 12, 2):  # Every 2 hours
                 forecast_time = start_time + timedelta(hours=i)
-                if language == "en":
-                    condition = ENGLISH_ROAD_CONDITIONS[i % len(ENGLISH_ROAD_CONDITIONS)]
-                else:
-                    condition = FINNISH_ROAD_CONDITIONS[i % len(FINNISH_ROAD_CONDITIONS)]
+                condition = condition_list[i % len(condition_list)]
                 forecasts.append({
                     "type": "Feature",
                     "properties": {
@@ -266,7 +348,7 @@ class DigitraficClient:
                     },
                     "geometry": {"type": "Point", "coordinates": [0, 0]}
                 })
-            
+
             return {
                 "features": forecasts
             }
