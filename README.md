@@ -59,7 +59,7 @@ Keep this information ready - you'll need it during the integration setup!
 3. **Select Language**: Choose Finnish or English
 4. **Choose Type**: Select "Ajokeli tieosuudella" or "Driving condition in a road section"
 5. **Enter Road Section**: Paste the road section title you copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "Tie 3: Valtatie 3 3.250")
-6. If there are multiple search results, selec the desired station from search results, otherwise this step is skipped automatically
+6. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
 
 The integration will create two entities in the instance of "Tie 3: Valtatie 3 3.250" for example:
 - **Current Conditions** sensor (e.g., Eng `sensor.valtatie_3_3_250_current_conditions`, or Fin `sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä`)
@@ -72,7 +72,7 @@ The integration will create two entities in the instance of "Tie 3: Valtatie 3 3
 3. **Select Language**: Choose Finnish or English
 4. **Choose Type**: Select "Liikenteen automaattinen mittausasema (LAM)" or "Traffic measuring station (TMS)"
 5. **Enter Station Name**: Type the station name you noted from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt4 Simo Saukkoranta")
-6. If there are multiple search results, selec the desired station from search results, otherwise this step is skipped automatically
+6. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
 
 The integration creates multiple sensors per station:
 - Speed measurements (rolling/fixed averages, both directions)
