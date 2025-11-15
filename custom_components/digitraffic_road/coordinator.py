@@ -40,21 +40,7 @@ class DigitraficDataCoordinator(DataUpdateCoordinator):
                 sensor_constants = await self.client.async_get_tms_sensor_constants(int(self.section_id))
                 tms_data = await self.client.async_get_tms_station_data(int(self.section_id))
 
-                measurements = {}
-                # Convert sensorValues list into a name -> value mapping for sensors
-                if tms_data and isinstance(tms_data, dict):
-                    for sv in tms_data.get("sensorValues", []):
-                        name = sv.get("name")
-                        if not name:
-                            continue
-                        measurements[name] = {
-                            "id": sv.get("id"),
-                            "value": sv.get("value"),
-                            "unit": sv.get("unit"),
-                            "measuredTime": sv.get("measuredTime"),
-                            "timeWindowStart": sv.get("timeWindowStart"),
-                            "timeWindowEnd": sv.get("timeWindowEnd"),
-                        }
+                measurements = {}\n                # Convert sensorValues list into a name -> value mapping for sensors\n                if tms_data and isinstance(tms_data, dict):\n                    _LOGGER.debug(\"TMS data keys: %s\", list(tms_data.keys()))\n                    sensor_values = tms_data.get(\"sensorValues\", [])\n                    _LOGGER.debug(\"Found %d sensor values for station %s\", len(sensor_values), self.section_id)\n                    \n                    for sv in sensor_values:\n                        name = sv.get(\"name\")\n                        value = sv.get(\"value\")\n                        if not name:\n                            continue\n                        _LOGGER.debug(\"Sensor: %s = %s (%s)\", name, value, sv.get(\"unit\"))\n                        measurements[name] = {\n                            \"id\": sv.get(\"id\"),\n                            \"value\": value,\n                            \"unit\": sv.get(\"unit\"),\n                            \"measuredTime\": sv.get(\"measuredTime\"),\n                            \"timeWindowStart\": sv.get(\"timeWindowStart\"),\n                            \"timeWindowEnd\": sv.get(\"timeWindowEnd\"),\n                        }
 
                 if station is None and not measurements:
                     _LOGGER.warning("No TMS station data for id: %s", self.section_id)
