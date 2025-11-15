@@ -40,25 +40,27 @@ ENGLISH_ROAD_CONDITIONS = [
 # Maps from API roadCondition / overallRoadCondition values to human text
 # Includes values returned by the actual Digitraffic forecast-sections API
 ROAD_CONDITION_MAP = {
-    # Older/legacy API values
-    "DRY": {"fi": "Tienpinta on kuiva", "en": "Road surface is dry"},
-    "WET": {"fi": "Tienpinta on märkä", "en": "Road surface is wet"},
-    "ICY": {"fi": "Tienpinnassa on paikoin jäätä", "en": "Patches of ice on the road"},
-    "POSSIBLE_RIME": {"fi": "Tienpinnassa on mahdollisesti kuuraa", "en": "Possible hoarfrost on the road"},
-    "SLIPPERY": {"fi": "Liukasta, tienpinnassa on jäätä tai lunta", "en": "Slippery, ice or snow on the road"},
-    "SNOW": {"fi": "Lumisade tai rankka vesisade", "en": "Snow or heavy rain"},
-    "HEAVY_SNOW": {"fi": "Raskas lumisade", "en": "Heavy snow"},
+    # Actual forecast-sections API roadCondition values
+    "DRY": {"fi": "Kuiva", "en": "Dry"},
+    "WET": {"fi": "Märkä", "en": "Wet"},
+    "FROST": {"fi": "Kuuraa", "en": "Frost"},
+    "ICE": {"fi": "Jäätä", "en": "Ice"},
+    "MOIST": {"fi": "Kostea", "en": "Damp"},
+    "PARTLY_ICY": {"fi": "Osittain jäätä", "en": "Partly icy"},
+    "SLUSH": {"fi": "Loskaa", "en": "Slush"},
+    "SNOW": {"fi": "Lunta", "en": "Snow"},
+    # Actual forecast-sections API overallRoadCondition values
+    "NORMAL_CONDITION": {"fi": "Hyvä ajokeli", "en": "Good driving conditions"},
+    "POOR_CONDITION": {"fi": "Huono ajokeli", "en": "Poor driving conditions"},
+    "EXTREMELY_POOR_CONDITION": {"fi": "Erittäin huono ajokeli", "en": "Extremely poor driving conditions"},
+    # Legacy values (kept for compatibility)
+    "ICY": {"fi": "Jäätä", "en": "Icy"},
+    "POSSIBLE_RIME": {"fi": "Kuuraa", "en": "Possible frost"},
+    "SLIPPERY": {"fi": "Loskaa", "en": "Slippery"},
+    "HEAVY_SNOW": {"fi": "Lunta", "en": "Heavy snow"},
     "GOOD": {"fi": "Hyvä ajokeli", "en": "Good driving conditions"},
     "POOR": {"fi": "Huono ajokeli", "en": "Poor driving conditions"},
-    # Actual forecast-sections API values
-    "NORMAL_CONDITION": {"fi": "Normaali ajokelistä", "en": "Normal driving conditions"},
-    "MOIST": {"fi": "Tienpinta on kostea", "en": "Road surface is damp"},
-    "FROST": {"fi": "Tienpinnassa on kuuraa", "en": "Hoarfrost on road"},
-    "ICE": {"fi": "Tienpinnassa on jäätä", "en": "Ice on road"},
-    "PARTLY_ICY": {"fi": "Tienpinta on osittain jäinen", "en": "Road surface partly icy"},
-    "SLEET": {"fi": "Räntää", "en": "Sleet"},
-    "SNOW": {"fi": "Lumisade", "en": "Snow"},
-    "HEAVY_SNOW": {"fi": "Raskas lumisade", "en": "Heavy snow"},
+    "SLEET": {"fi": "Loskaa", "en": "Sleet"},
 }
 
 # Precise mock road sections based on Finnish road structure
