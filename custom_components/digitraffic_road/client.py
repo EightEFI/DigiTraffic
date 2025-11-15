@@ -422,8 +422,25 @@ class DigitraficClient:
                                                 time_str = dt_eet.strftime("%H:%M")
                                             except Exception:
                                                 time_str = time_iso
-                                            rc = f.get("forecastConditionReason", {}).get("roadCondition") or f.get("overallRoadCondition")
-                                            condition_text = ROAD_CONDITION_MAP.get(rc, {}).get(language, rc or "Unavailable")
+                                            
+                                            # Get overall road condition
+                                            overall_rc = f.get("overallRoadCondition")
+                                            overall_text = ROAD_CONDITION_MAP.get(overall_rc, {}).get(language, overall_rc or "")
+                                            
+                                            # Get specific road condition
+                                            road_rc = f.get("forecastConditionReason", {}).get("roadCondition")
+                                            road_text = ROAD_CONDITION_MAP.get(road_rc, {}).get(language, road_rc or "")
+                                            
+                                            # Combine both conditions
+                                            if overall_text and road_text:
+                                                condition_text = f"{overall_text}, {road_text}"
+                                            elif overall_text:
+                                                condition_text = overall_text
+                                            elif road_text:
+                                                condition_text = road_text
+                                            else:
+                                                condition_text = "Unavailable"
+                                            
                                             forecasts.append({
                                                 "type": "Feature",
                                                 "properties": {
