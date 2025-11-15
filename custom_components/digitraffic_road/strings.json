@@ -12,7 +12,7 @@
         "title": "Valitse seurattava tyyppi",
         "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
         "data": {
-          "monitor_type": "Seurattava tyyppi"
+          "monitor_type": "Valitse tyyppi"
         },
         "data_description": {
           "monitor_type": "Ajokeli tieosuudella tai Liikenteen automaattinen mittausasema (LAM)"
