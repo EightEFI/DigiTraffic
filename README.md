@@ -1,30 +1,19 @@
 # DigiTraffic Road Conditions and TMS data
 
-A Home Assistant custom integration that provides real-time road conditions and traffic data from Finland's Digitraffic service (https://www.digitraffic.fi/).
-
-## Quick Start
-
-Before setting up the integration, find the road section or traffic station you want to monitor:
-
-1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
-2. **For Road Conditions**: Click on any road section (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250")
-3. **For Traffic Stations (LAM/TMS)**: Look for the camera/measurement icons on the map, click them, and note the station name (e.g., "vt4 Simo Saukkoranta")
-
-Keep this information ready - you'll need it during the integration setup!
+A Home Assistant custom integration that provides real-time road conditions and traffic data from Finland's Digitraffic service in Finnish and English (https://www.digitraffic.fi/).
 
 ## Features
 
-### 🚗 Road Conditions Monitoring
+### 🚗 Road Conditions/Ajokeli
 - **Current Conditions**: Real-time driving conditions for specific road sections
 - **Weather Forecast**: Time-stamped hourly forecasts with road condition predictions
 - **Smart Resolution**: Automatically finds road sections by entering road names or titles from the Fintraffic map
-- **Bilingual Support**: Full Finnish and English language support
 
-### 📊 Traffic Measurement Stations (TMS/LAM)
+### 📊 Traffic Measurement Station/Liikenteen Automaattinen Mittausasema (TMS/LAM)
 - **Speed Measurements**: Rolling and fixed average speeds in both directions
 - **Traffic Counts**: Vehicle overtaking counts per direction and lane
 - **Sensor Constants**: Access to station-specific calibration values (VVAPAAS, lane references)
-- **Per-Station Metrics**: Multiple sensors per station for comprehensive traffic monitoring
+- **Per-Station Metrics**: Multiple (19pcs) sensors per station for comprehensive traffic monitoring
 
 ### ⚙️ Integration Features
 - **Multi-language UI**: Choose between Finnish and English during setup
@@ -52,6 +41,17 @@ Keep this information ready - you'll need it during the integration setup!
 
 ## Configuration
 
+### Quick Start
+
+Before setting up the integration, find the road section(s) or traffic station(s) you want to monitor:
+
+1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
+2. **For Road Conditions**: Click on any road section you want to add to HA (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250" or "Tie 10: Turun valtatie 10.24")
+3. **For Traffic Stations (LAM/TMS)**: Look for two arrows (<•>), click them, and copy the station name (e.g., "vt4 Simo Saukkoranta" or "Tie 9 Orivesi, Talviainen")
+
+Keep this information ready - you'll need it during the integration setup!
+
+
 ### Adding Road Condition Monitoring
 
 1. Go to **Settings** → **Devices & Services** → **Add Integration**
@@ -61,9 +61,9 @@ Keep this information ready - you'll need it during the integration setup!
 5. **Enter Road Section**: Paste the road section title you copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "Tie 3: Valtatie 3 3.250")
 6. If multiple matches are found, select the exact section from the dropdown
 
-The integration will create two entities:
-- **Current Conditions** sensor (e.g., `sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä`)
-- **Forecast** sensor (e.g., `sensor.valtatie_3_3_250_ennuste`)
+The integration will create two entities in the instance of "Tie 3: Valtatie 3 3.250" for example:
+- **Current Conditions** sensor (e.g., Eng `sensor.valtatie_3_3_250_current_conditions`, or Fin `sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä`)
+- **Forecast** sensor (e.g., Eng `sensor.valtatie_3_3_250_forecast`, or Fin `sensor.valtatie_3_3_250_ennuste`)
 
 ### Adding Traffic Measurement Station (TMS/LAM)
 
@@ -125,6 +125,8 @@ Each TMS station creates multiple sensors for different measurements:
 
 #### Sensor Constants
 - `sensor.<station>_sensor_constants` - Station calibration values as attributes
+
+Read more about datapoints here: https://www.digitraffic.fi/tieliikenne/lam/
 
 ## Road Condition Reference
 
