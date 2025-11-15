@@ -97,7 +97,9 @@ class DigitraficCurrentConditionsSensor(CoordinatorEntity, SensorEntity):
         self.section_id = section_id
         self._section_name = section_name
         self._attr_unique_id = f"{DOMAIN}_{section_id}_conditions"
-        self._attr_name = f"{section_name} - Current Conditions"
+        # Use language-specific label
+        label = "Ajokeli tällä hetkellä" if coordinator.language == "fi" else "Current Conditions"
+        self._attr_name = f"{section_name} - {label}"
 
     @property
     def state(self) -> Any:
@@ -234,7 +236,9 @@ class DigitraficForecastSensor(CoordinatorEntity, SensorEntity):
         self.section_id = section_id
         self._section_name = section_name
         self._attr_unique_id = f"{DOMAIN}_{section_id}_forecast"
-        self._attr_name = f"{section_name} - Forecast"
+        # Use language-specific label
+        label = "Ennuste" if coordinator.language == "fi" else "Forecast"
+        self._attr_name = f"{section_name} - {label}"
 
     @property
     def state(self) -> str | None:
