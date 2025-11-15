@@ -25,7 +25,53 @@ async def async_setup_entry(
     coordinator: DigitraficDataCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
     # Support both road-section based entries and TMS-based entries.
-    section_id = config_entry.data.get(CONF_ROAD_SECTION_ID) or config_entry.data.get(CONF_TMS_ID)
+    # If this is a TMS/LAM entry, create LAM-specific sensors instead of
+    # the generic current conditions and forecast sensors.
+    tms_id = config_entry.data.get(CONF_TMS_ID)
+    if tms_id:
+        section_name = config_entry.data.get(CONF_ROAD_SECTION) or str(tms_id)
+
+        # List of LAM measurement keys the user requested. These are measurement
+        # constants often available from the TMS measurement feeds.
+        lam_measurement_keys = [
+            "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA1",
+            "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA2",
+            "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA1_VVAPAAS1",
+            "KESKINOPEUS_5MIN_LIUKUVA_SUUNTA2_VVAPAAS2",
+            "KESKINOPEUS_60MIN_KIINTEA_SUUNTA1",
+            "KESKINOPEUS_60MIN_KIINTEA_SUUNTA2",
+            "KESKINOPEUS_5MIN_KIINTEA_SUUNTA1_VVAPAAS1",
+            "KESKINOPEUS_5MIN_KIINTEA_SUUNTA2_VVAPAAS2",
+            "OHITUKSET_5MIN_LIUKUVA_SUUNTA1",
+            "OHITUKSET_5MIN_LIUKUVA_SUUNTA2",
+            "OHITUKSET_5MIN_LIUKUVA_SUUNTA1_MS1",
+            "OHITUKSET_5MIN_LIUKUVA_SUUNTA2_MS2",
+            "OHITUKSET_5MIN_KIINTEA_SUUNTA1_MS1",
+            "OHITUKSET_5MIN_KIINTEA_SUUNTA2_MS2",
+            "OHITUKSET_60MIN_KIINTEA_SUUNTA1",
+            "OHITUKSET_60MIN_KIINTEA_SUUNTA2",
+            "OHITUKSET_60MIN_KIINTEA_SUUNTA1_MS1",
+            "OHITUKSET_60MIN_KIINTEA_SUUNTA2_MS2",
+        ]
+
+        entities = []
+
+        # Sensors for sensor-constant values (VVAPAAS etc.) will be created
+        # dynamically based on what the coordinator fetches. We create a
+        # sensor entity per requested measurement key — the entity will look
+        # up values in the coordinator data when available.
+        for key in lam_measurement_keys:
+            entities.append(DigitraficTmsMeasurementSensor(coordinator, tms_id, section_name, key))
+
+        # Additionally create sensors for sensor constant values returned by
+        # the /sensor-constants endpoint (VVAPAAS, MS1/MS2, etc.)
+        entities.append(DigitraficTmsConstantsSensor(coordinator, tms_id, section_name))
+
+        async_add_entities(entities)
+        return
+
+    # Default behavior: create the two generic sensors for road section forecasts
+    section_id = config_entry.data.get(CONF_ROAD_SECTION_ID)
     section_name = config_entry.data.get(CONF_ROAD_SECTION) or section_id
 
     entities = [
@@ -154,3 +200,82 @@ class DigitraficForecastSensor(CoordinatorEntity, SensorEntity):
     def icon(self) -> str:
         """Return the icon."""
         return "mdi:weather-cloudy"
+
+
+class DigitraficTmsConstantsSensor(CoordinatorEntity, SensorEntity):
+    """Sensor that exposes TMS sensor-constant values (VVAPAAS, MS1/MS2, etc.).
+
+    This sensor aggregates the station's sensor-constant values into a single
+    JSON-serializable attribute so users can inspect LAM constants.
+    """
+
+    def __init__(self, coordinator: DigitraficDataCoordinator, station_id: int, station_name: str):
+        super().__init__(coordinator)
+        self.station_id = station_id
+        self._station_name = station_name
+        self._attr_unique_id = f"{DOMAIN}_tms_{station_id}_constants"
+        self._attr_name = f"{station_name} - Sensor Constants"
+
+    @property
+    def state(self) -> str | None:
+        # No single scalar state — return availability indicator
+        return "available" if self.coordinator.last_update_success else "unavailable"
+
+    @property
+    def extra_state_attributes(self):
+        attrs = {}
+        data = self.coordinator.data or {}
+        sc = data.get("sensor_constants") or {}
+        # Expecting sensorConstantValues list
+        vals = sc.get("sensorConstantValues") if isinstance(sc, dict) else None
+        if vals:
+            for v in vals:
+                name = v.get("name")
+                value = v.get("value")
+                if name:
+                    attrs[name] = value
+        return attrs
+
+
+class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
+    """Placeholder sensor for a specific LAM/TMS measurement key.
+
+    Currently this reads values from coordinator.data if available; if the
+    integration later implements per-sensor observations fetching, the
+    coordinator can populate `measurements` and this entity will pick them up.
+    """
+
+    def __init__(self, coordinator: DigitraficDataCoordinator, station_id: int, station_name: str, measure_key: str):
+        super().__init__(coordinator)
+        self.station_id = station_id
+        self._station_name = station_name
+        self.measure_key = measure_key
+        self._attr_unique_id = f"{DOMAIN}_tms_{station_id}_{measure_key}"
+        self._attr_name = f"{station_name} - {measure_key}"
+
+    @property
+    def state(self) -> str | None:
+        data = self.coordinator.data or {}
+        # Try sensor constants first (some keys like VVAPAAS may be constants)
+        sc = data.get("sensor_constants") or {}
+        vals = sc.get("sensorConstantValues") if isinstance(sc, dict) else None
+        if vals:
+            for v in vals:
+                if v.get("name") == self.measure_key:
+                    return v.get("value")
+
+        # Next try station measurements if coordinator provides them under 'measurements'
+        measurements = data.get("measurements") or {}
+        if isinstance(measurements, dict) and self.measure_key in measurements:
+            return measurements.get(self.measure_key)
+
+        # No data available yet
+        return None
+
+    @property
+    def available(self) -> bool:
+        return self.coordinator.last_update_success
+
+    @property
+    def icon(self) -> str:
+        return "mdi:counter"

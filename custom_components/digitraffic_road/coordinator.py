@@ -33,19 +33,30 @@ class DigitraficDataCoordinator(DataUpdateCoordinator):
         """Fetch data from Digitraffic API."""
         try:
             _LOGGER.debug("Updating data for section: %s", self.section_id)
-            
-            conditions = await self.client.get_road_conditions(self.section_id, language=self.language)
-            forecast = await self.client.get_forecast(self.section_id, language=self.language)
-            
-            if conditions is None:
-                _LOGGER.warning("No conditions data for section: %s", self.section_id)
-            if forecast is None:
-                _LOGGER.warning("No forecast data for section: %s", self.section_id)
-            
-            data = {
-                "conditions": conditions,
-                "forecast": forecast,
-            }
+            # If section_id looks like a numeric TMS id, fetch TMS-specific data
+            data: Dict[str, Any]
+            if str(self.section_id).isdigit():
+                station = await self.client.async_get_tms_station(int(self.section_id))
+                sensor_constants = await self.client.async_get_tms_sensor_constants(int(self.section_id))
+                if station is None:
+                    _LOGGER.warning("No TMS station data for id: %s", self.section_id)
+                data = {
+                    "tms_station": station,
+                    "sensor_constants": sensor_constants,
+                }
+            else:
+                conditions = await self.client.get_road_conditions(self.section_id, language=self.language)
+                forecast = await self.client.get_forecast(self.section_id, language=self.language)
+                
+                if conditions is None:
+                    _LOGGER.warning("No conditions data for section: %s", self.section_id)
+                if forecast is None:
+                    _LOGGER.warning("No forecast data for section: %s", self.section_id)
+                
+                data = {
+                    "conditions": conditions,
+                    "forecast": forecast,
+                }
             
             _LOGGER.debug("Successfully updated data for section: %s", self.section_id)
             return data

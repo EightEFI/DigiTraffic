@@ -15,6 +15,7 @@ FORECAST_SECTIONS_URL = "https://tie.digitraffic.fi/api/weather/v1/forecast-sect
 FORECAST_SECTIONS_METADATA_URL = "https://tie.digitraffic.fi/api/weather/v1/forecast-sections"
 TMS_STATIONS_URL = "https://tie.digitraffic.fi/api/tms/v1/stations"
 TMS_STATION_URL = "https://tie.digitraffic.fi/api/tms/v1/stations/{id}"
+TMS_SENSOR_CONSTANTS_URL = "https://tie.digitraffic.fi/api/tms/v1/stations/{id}/sensor-constants"
 
 # Finnish road condition descriptions
 FINNISH_ROAD_CONDITIONS = [
@@ -495,6 +496,22 @@ class DigitraficClient:
                 return await resp.json()
         except Exception as err:
             _LOGGER.debug("Error fetching TMS station %s: %s", station_id, err)
+            return None
+
+    async def async_get_tms_sensor_constants(self, station_id: int) -> Optional[Dict[str, Any]]:
+        """Fetch sensor constant values for a station by id.
+
+        Returns JSON structure containing sensor constant definitions/values.
+        """
+        try:
+            url = TMS_SENSOR_CONSTANTS_URL.format(id=station_id)
+            async with self.session.get(url, headers={"Accept": "application/json"}) as resp:
+                if resp.status != 200:
+                    _LOGGER.debug("TMS sensor-constants %s returned %d", station_id, resp.status)
+                    return None
+                return await resp.json()
+        except Exception as err:
+            _LOGGER.debug("Error fetching TMS sensor constants %s: %s", station_id, err)
             return None
 
     def save_override(self, user_input: str, section_id: str) -> bool:
