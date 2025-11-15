@@ -1,14 +1,16 @@
 """Digitraffic API client for road conditions."""
 import aiohttp
 import logging
-from typing import Any, Dict, List, Optional
+import re
+from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 
 _LOGGER = logging.getLogger(__name__)
 
-# Digitraffic API endpoint
+# Digitraffic API endpoints
 BASE_URL = "https://tie.digitraffic.fi/api/v1/data"
 FORECAST_SECTIONS_URL = "https://tie.digitraffic.fi/api/weather/v1/forecast-sections/forecasts"
+FORECAST_SECTIONS_METADATA_URL = "https://tie.digitraffic.fi/api/weather/v1/forecast-sections"
 
 # Finnish road condition descriptions
 FINNISH_ROAD_CONDITIONS = [
@@ -36,9 +38,11 @@ ENGLISH_ROAD_CONDITIONS = [
 ]
 
 # Maps from API roadCondition / overallRoadCondition values to human text
+# Includes values returned by the actual Digitraffic forecast-sections API
 ROAD_CONDITION_MAP = {
+    # Older/legacy API values
     "DRY": {"fi": "Tienpinta on kuiva", "en": "Road surface is dry"},
-    "WET": {"fi": "Tien pinta on märkä", "en": "Road surface is wet"},
+    "WET": {"fi": "Tienpinta on märkä", "en": "Road surface is wet"},
     "ICY": {"fi": "Tienpinnassa on paikoin jäätä", "en": "Patches of ice on the road"},
     "POSSIBLE_RIME": {"fi": "Tienpinnassa on mahdollisesti kuuraa", "en": "Possible hoarfrost on the road"},
     "SLIPPERY": {"fi": "Liukasta, tienpinnassa on jäätä tai lunta", "en": "Slippery, ice or snow on the road"},
@@ -46,6 +50,15 @@ ROAD_CONDITION_MAP = {
     "HEAVY_SNOW": {"fi": "Raskas lumisade", "en": "Heavy snow"},
     "GOOD": {"fi": "Hyvä ajokeli", "en": "Good driving conditions"},
     "POOR": {"fi": "Huono ajokeli", "en": "Poor driving conditions"},
+    # Actual forecast-sections API values
+    "NORMAL_CONDITION": {"fi": "Normaali ajokelistä", "en": "Normal driving conditions"},
+    "MOIST": {"fi": "Tienpinta on märkä", "en": "Road surface is wet"},
+    "FROST": {"fi": "Tienpinnassa on kuuraa", "en": "Hoarfrost on road"},
+    "ICE": {"fi": "Tienpinnassa on jäätä", "en": "Ice on road"},
+    "PARTLY_ICY": {"fi": "Tienpinta on osittain jäinen", "en": "Road surface partly icy"},
+    "SLEET": {"fi": "Räntää", "en": "Sleet"},
+    "SNOW": {"fi": "Lumisade", "en": "Snow"},
+    "HEAVY_SNOW": {"fi": "Raskas lumisade", "en": "Heavy snow"},
 }
 
 # Precise mock road sections based on Finnish road structure
@@ -168,6 +181,71 @@ class DigitraficClient:
         """Initialize the client."""
         self.session = session
 
+    @staticmethod
+    def _normalize_string(s: str) -> str:
+        """Normalize string for comparison: lowercase, remove punctuation, collapse spaces."""
+        s = s.lower()
+        s = re.sub(r"[^a-z0-9åäöÅÄÖ ]+", " ", s)
+        s = re.sub(r"\s+", " ", s).strip()
+        return s
+
+    async def resolve_section_id(self, user_input: str) -> Optional[str]:
+        """Resolve a user-entered road section title to an API section ID.
+        
+        Searches the forecast-sections metadata endpoint to find matching section IDs.
+        Returns the best match or None if no match found.
+        
+        Args:
+            user_input: User-entered section title (e.g., "Tie 3: Valtatie 3 3.250")
+        
+        Returns:
+            Best matching section ID (e.g., "00003_250_00000_1_0") or None
+        """
+        try:
+            _LOGGER.debug("Attempting to resolve section ID for: %s", user_input)
+            
+            # If input looks like an ID (numeric pattern), return as-is
+            if re.match(r"^[0-9]{5}_\d+", user_input):
+                return user_input
+            
+            async with self.session.get(FORECAST_SECTIONS_METADATA_URL) as resp:
+                if resp.status != 200:
+                    _LOGGER.debug("Metadata endpoint returned %d", resp.status)
+                    return None
+                
+                data = await resp.json()
+                features = data.get("features", [])
+                
+                norm_user = self._normalize_string(user_input)
+                user_tokens = set(norm_user.split())
+                
+                candidates = []
+                for feat in features:
+                    props = feat.get("properties", {})
+                    desc = props.get("description", "")
+                    if desc:
+                        norm_desc = self._normalize_string(desc)
+                        desc_tokens = set(norm_desc.split())
+                        common = user_tokens & desc_tokens
+                        if len(common) > 0:
+                            score = len(common)
+                            section_id = props.get("id")
+                            candidates.append((score, section_id, desc))
+                
+                if candidates:
+                    candidates.sort(reverse=True, key=lambda x: x[0])
+                    best_score, best_id, best_desc = candidates[0]
+                    _LOGGER.debug("Resolved '%s' to section %s (score %d, desc: %s)", 
+                                 user_input, best_id, best_score, best_desc)
+                    return best_id
+                else:
+                    _LOGGER.debug("No matching section found for: %s", user_input)
+                    return None
+        
+        except Exception as err:
+            _LOGGER.warning("Error resolving section ID: %s", err)
+            return None
+
     async def search_road_sections(self, query: str) -> List[Dict[str, Any]]:
         """Search for road sections by name, road number, or location.
         
@@ -216,21 +294,35 @@ class DigitraficClient:
             return []
 
     async def get_road_conditions(self, section_id: str, language: str = "fi") -> Optional[Dict[str, Any]]:
-        """Fetch current road conditions for a specific section."""
+        """Fetch current road conditions for a specific section.
+        
+        Args:
+            section_id: Either an API section ID or a user-entered road title (will be resolved)
+            language: Language for condition text ("fi" or "en")
+        """
         try:
             _LOGGER.debug("Fetching road conditions for section: %s", section_id)
 
+            # Attempt to resolve user input to API section ID
+            resolved_id = section_id
+            if not re.match(r"^[0-9]{5}_\d+", section_id):
+                # Doesn't look like an API ID, try to resolve
+                resolved = await self.resolve_section_id(section_id)
+                if resolved:
+                    resolved_id = resolved
+                else:
+                    _LOGGER.warning("Could not resolve section title: %s", section_id)
+            
             # If session looks like an aiohttp session, attempt to fetch real data
             if hasattr(self.session, "get"):
                 try:
                     async with self.session.get(FORECAST_SECTIONS_URL) as resp:
                         if resp.status == 200:
                             data = await resp.json()
-                            # Find matching forecast section by id or by matching section name
+                            # Find matching forecast section by resolved ID
                             for fs in data.get("forecastSections", []):
-                                # API uses numeric ids; allow user to paste either id or title
-                                if fs.get("id") == section_id or fs.get("sectionName") == section_id:
-                                    # find observation
+                                if fs.get("id") == resolved_id:
+                                    # Find observation
                                     obs = next((f for f in fs.get("forecasts", []) if f.get("type") == "OBSERVATION"), None)
                                     if obs:
                                         rc = obs.get("overallRoadCondition") or obs.get("forecastConditionReason", {}).get("roadCondition")
@@ -241,7 +333,7 @@ class DigitraficClient:
                                                     "type": "Feature",
                                                     "properties": {
                                                         "id": fs.get("id"),
-                                                        "location": fs.get("sectionName", section_id),
+                                                        "location": section_id,
                                                         "condition": condition_text,
                                                         "reliability": obs.get("reliability"),
                                                         "last_updated": data.get("dataUpdatedTime"),
@@ -286,9 +378,24 @@ class DigitraficClient:
             return None
 
     async def get_forecast(self, section_id: str, language: str = "fi") -> Optional[Dict[str, Any]]:
-        """Fetch forecast for a specific road section."""
+        """Fetch forecast for a specific road section.
+        
+        Args:
+            section_id: Either an API section ID or a user-entered road title (will be resolved)
+            language: Language for condition text ("fi" or "en")
+        """
         try:
             _LOGGER.debug("Fetching forecast for section: %s", section_id)
+            
+            # Attempt to resolve user input to API section ID
+            resolved_id = section_id
+            if not re.match(r"^[0-9]{5}_\d+", section_id):
+                # Doesn't look like an API ID, try to resolve
+                resolved = await self.resolve_section_id(section_id)
+                if resolved:
+                    resolved_id = resolved
+                else:
+                    _LOGGER.warning("Could not resolve section title: %s", section_id)
             
             # Generate mock forecast data for next 12 hours (every 2 hours)
             forecasts = []
@@ -305,10 +412,10 @@ class DigitraficClient:
                     async with self.session.get(FORECAST_SECTIONS_URL) as resp:
                         if resp.status == 200:
                             data = await resp.json()
-                            # find matching forecast section
+                            # Find matching forecast section by resolved ID
                             for fs in data.get("forecastSections", []):
-                                if fs.get("id") == section_id or fs.get("sectionName") == section_id:
-                                    # build forecasts from API
+                                if fs.get("id") == resolved_id:
+                                    # Build forecasts from API
                                     forecasts = []
                                     for f in fs.get("forecasts", []):
                                         if f.get("type") == "FORECAST":
