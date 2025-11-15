@@ -2,14 +2,14 @@
   "config": {
     "step": {
       "user": {
-        "title": "Valitse kieli",
+        "title": "Choose language / Valitse kieli",
         "description": "Valitse haluamasi käyttöliittymän kieli (Suomi tai English).",
         "data": {
           "language": "Kieli"
         }
       },
       "monitor_type": {
-        "title": "Valitse seurattava tyyppi",
+        "title": "Valitse tyyppi",
         "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
         "data": {
           "monitor_type": "Valitse tyyppi"
