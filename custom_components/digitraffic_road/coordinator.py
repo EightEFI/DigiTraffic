@@ -1,4 +1,4 @@
-"""Data coordinator for Digitraffic Road Conditions."""
+"""Data coordinator for DigiTraffic."""
 import logging
 from datetime import timedelta
 from typing import Any, Dict

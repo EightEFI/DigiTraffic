@@ -1,6 +1,6 @@
 {
   "domain": "digitraffic_road",
-  "name": "Digitraffic Road Conditions",
+  "name": "DigiTraffic",
   "codeowners": ["@EightEFI"],
   "config_flow": true,
   "documentation": "https://github.com/EightEFI/Digitraffic-road-conditions",

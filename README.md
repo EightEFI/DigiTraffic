@@ -1,15 +1,18 @@
-# Digitraffic Road Conditions Integration
+# DigiTraffic
 
-A custom Home Assistant integration that fetches real-time road condition data from the Finnish Digitraffic service (https://www.digitraffic.fi/).
+DigiTraffic is a custom Home Assistant integration that fetches data from the Finnish Digitraffic services (https://www.digitraffic.fi/). At the moment the integration supports fetching:
+
+- Road conditions for a specific road section (current observation and time-stamped forecasts)
+- Traffic measurement station (TMS/LAM) measurements (per-station metrics)
 
 ## Features
 
 - **Real-time road conditions**: Get current driving conditions for your selected road section
--- **Forecast**: View weather and road condition forecasts (time-specific entries)
-- **Multiple road sections**: Add multiple instances to monitor different road sections
+- **Forecast**: View time-stamped weather and road condition forecast entries
+- **Traffic measurement stations**: Fetch TMS/LAM measurement data (per-station metrics)
+- **Multiple road sections / stations**: Add multiple instances to monitor different road sections or stations
 - **Automatic updates**: Data refreshes every 5 minutes (configurable)
 - **Reliability indicator**: Shows data reliability percentage for informed decision making
-- **Finnish localization**: All road conditions displayed in Finnish
 
 ## Installation
 
@@ -31,7 +34,7 @@ A custom Home Assistant integration that fetches real-time road condition data f
 ### Adding the Integration
 
 1. Go to **Settings** → **Devices & Services** → **Integrations**
-2. Click **Create Integration** and search for "Digitraffic Road Conditions"
+2. Click **Create Integration** and search for "DigiTraffic"
 3. Open the [Fintraffic road conditions map](https://liikennetilanne.fintraffic.fi/kartta/)
 4. Click on any specific road section you want to monitor
 5. Copy the exact title shown (e.g., "Tie 4: Kemintie 4.421")

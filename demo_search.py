@@ -123,7 +123,7 @@ def search_road_sections(query):
 def demo():
     """Demonstrate the search functionality."""
     print("=" * 75)
-    print("DIGITRAFFIC ROAD CONDITIONS - SEARCH FUNCTIONALITY DEMO")
+    print("DigiTraffic - Search functionality demo")
     print("=" * 75)
     
     # Example search queries

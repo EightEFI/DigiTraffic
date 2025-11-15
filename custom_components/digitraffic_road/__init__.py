@@ -1,4 +1,4 @@
-"""Digitraffic Road Conditions integration."""
+"""DigiTraffic integration."""
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -13,7 +13,7 @@ PLATFORMS = ["sensor"]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up Digitraffic Road Conditions from a config entry."""
+    """Set up DigiTraffic from a config entry."""
     hass.data.setdefault(DOMAIN, {})
     
     section_id = entry.data[CONF_ROAD_SECTION_ID]

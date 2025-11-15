@@ -1,4 +1,4 @@
-"""Constants for the Digitraffic Road Conditions integration."""
+"""Constants for the DigiTraffic integration."""
 
 DOMAIN = "digitraffic_road"
 CONF_ROAD_SECTION = "road_section"

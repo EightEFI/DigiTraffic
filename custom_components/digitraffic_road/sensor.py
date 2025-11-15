@@ -1,4 +1,4 @@
-"""Sensor platform for Digitraffic Road Conditions."""
+"""Sensor platform for DigiTraffic."""
 import logging
 from datetime import timedelta
 from typing import Any, Dict

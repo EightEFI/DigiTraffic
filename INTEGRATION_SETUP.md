@@ -1,6 +1,10 @@
-# Digitraffic Road Conditions - Home Assistant Custom Integration
+# DigiTraffic - Home Assistant Custom Integration
 
-This is a custom HACS integration for Home Assistant that fetches real-time road condition data from the Finnish Digitraffic service (https://www.digitraffic.fi/tieliikenne/).
+This is a custom HACS integration for Home Assistant that fetches data from the Finnish Digitraffic services (https://www.digitraffic.fi/tieliikenne/).
+Currently supported data types:
+
+- Road conditions (observations and time-stamped forecasts)
+- Traffic measurement station (TMS/LAM) measurements
 
 ## Overview
 
@@ -70,7 +74,7 @@ Digitraffic-road-conditions/
 5. Click "Install"
 6. Restart Home Assistant
 7. Go to Settings → Devices & Services → Create Integration
-8. Search for "Digitraffic Road Conditions"
+8. Search for "DigiTraffic"
 9. Follow the configuration flow to select your road section
 
 ### Option 2: Manual Installation
@@ -88,7 +92,7 @@ After installation, add the integration through the Home Assistant UI:
 
 1. Settings → Devices & Services → Integrations
 2. Click "Create Integration"
-3. Search for and select "Digitraffic Road Conditions"
+3. Search for and select "DigiTraffic"
 4. Choose your desired road section from the dropdown
 5. Click "Create"
 

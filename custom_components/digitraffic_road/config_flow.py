@@ -1,4 +1,4 @@
-"""Config flow for Digitraffic Road Conditions integration."""
+"""Config flow for DigiTraffic integration."""
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -21,7 +21,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Digitraffic Road Conditions."""
+    """Handle a config flow for DigiTraffic."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
@@ -131,7 +131,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class DigitraficRoadOptionsFlow(config_entries.OptionsFlow):
-    """Handle options for Digitraffic Road Conditions."""
+    """Handle options for DigiTraffic."""
 
     def __init__(self, config_entry):
         """Initialize options flow."""

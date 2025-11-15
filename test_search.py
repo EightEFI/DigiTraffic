@@ -12,7 +12,7 @@ import aiohttp
 async def demo_search():
     """Demonstrate the search functionality."""
     print("=" * 70)
-    print("DIGITRAFFIC ROAD CONDITIONS - SEARCH FUNCTIONALITY DEMO")
+    print("DigiTraffic - Search functionality demo")
     print("=" * 70)
     
     async with aiohttp.ClientSession() as session:

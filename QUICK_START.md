@@ -4,7 +4,7 @@
 
 ### Via HACS:
 1. Add custom repository: `https://github.com/EightEFI/Digitraffic-road-conditions`
-2. Install "Digitraffic Road Conditions"
+2. Install "DigiTraffic"
 3. Restart Home Assistant
 4. Go to Settings → Devices & Services → Integrations
 5. Create Integration → Search "Digitraffic" → Select road section
