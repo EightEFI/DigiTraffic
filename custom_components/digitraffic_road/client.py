@@ -9,6 +9,19 @@ _LOGGER = logging.getLogger(__name__)
 # Digitraffic API endpoint
 BASE_URL = "https://tie.digitraffic.fi/api/v1/data"
 
+# Finnish road condition descriptions
+FINNISH_ROAD_CONDITIONS = [
+    "Tienpinta on kuiva",
+    "Tienpinnassa on märkää",
+    "Tienpinnassa on paikoin jäätä",
+    "Tienpinnassa on mahdollisesti kuuraa",
+    "Liukasta, tienpinnassa on jäätä tai lunta",
+    "Lumisade tai rankka sade",
+    "Raskas lumisade",
+    "Hyvät ajokeli",
+    "Huonot ajokeli",
+]
+
 # Precise mock road sections based on Finnish road structure
 # Format: "Road Type + Number: Location + KM marker"
 MOCK_ROAD_SECTIONS = [
@@ -93,6 +106,14 @@ MOCK_ROAD_SECTIONS = [
         "location": "Oulu",
         "km": "130.0-200.0",
         "description": "Oulu region"
+    },
+    {
+        "id": "VT22_0_80",
+        "name": "VT22: Kemintie",
+        "road": "VT22",
+        "location": "Kemintie",
+        "km": "0.0-80.0",
+        "description": "Kemi - Oulu road"
     },
     # Regional roads (Seututie)
     {
@@ -180,18 +201,8 @@ class DigitraficClient:
             )
             location = section["location"] if section else section_id
             
-            # Simulate realistic conditions based on road type
-            conditions_options = [
-                "Clear",
-                "Cloudy", 
-                "Light snow",
-                "Light rain",
-                "Wet",
-                "Slippery",
-                "Icy"
-            ]
-            
-            condition = conditions_options[hash(section_id) % len(conditions_options)]
+            # Use Finnish road condition descriptions
+            condition = FINNISH_ROAD_CONDITIONS[hash(section_id) % len(FINNISH_ROAD_CONDITIONS)]
             
             return {
                 "features": [
@@ -217,19 +228,23 @@ class DigitraficClient:
         try:
             _LOGGER.debug("Fetching forecast for section: %s", section_id)
             
-            # Generate mock forecast data for next 12 hours
+            # Generate mock forecast data for next 12 hours (every 2 hours)
             forecasts = []
             now = datetime.now()
-            conditions = ["Clear", "Cloudy", "Light snow", "Light rain", "Wet", "Slippery"]
+            # Round to next 2-hour mark
+            hours_to_next = 2 - (now.hour % 2)
+            if hours_to_next == 2:
+                hours_to_next = 0
+            start_time = now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=hours_to_next)
             
-            for i in range(12):
-                forecast_time = now + timedelta(hours=i)
+            for i in range(0, 12, 2):  # Every 2 hours
+                forecast_time = start_time + timedelta(hours=i)
+                condition = FINNISH_ROAD_CONDITIONS[i % len(FINNISH_ROAD_CONDITIONS)]
                 forecasts.append({
                     "type": "Feature",
                     "properties": {
-                        "time": forecast_time.isoformat(),
-                        "condition": conditions[i % len(conditions)],
-                        "temperature": -5 + (i % 8),
+                        "time": forecast_time.strftime("%H:%M"),
+                        "condition": condition,
                     },
                     "geometry": {"type": "Point", "coordinates": [0, 0]}
                 })
@@ -275,21 +290,13 @@ class DigitraficClient:
             return "No forecast data available"
         
         forecast_lines = []
-        for forecast in forecasts[:12]:
+        for forecast in forecasts:
             properties = forecast.get("properties", {})
             time_str = properties.get("time", "Unknown")
             condition = properties.get("condition", "Unknown")
-            temp = properties.get("temperature", "")
             
-            try:
-                dt = datetime.fromisoformat(time_str)
-                time_formatted = dt.strftime("%H:%M")
-            except:
-                time_formatted = time_str.split("T")[1][:5] if "T" in time_str else time_str
-            
-            line = f"{time_formatted}: {condition}"
-            if temp != "":
-                line += f" ({temp}°C)"
+            # Time is already in HH:MM format
+            line = f"{time_str} {condition}"
             forecast_lines.append(line)
         
-        return "12h Forecast:\n" + "\n".join(forecast_lines) if forecast_lines else "No forecast data"
+        return "\n".join(forecast_lines) if forecast_lines else "No forecast data"

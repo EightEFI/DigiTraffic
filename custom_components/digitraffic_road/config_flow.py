@@ -54,7 +54,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             errors=errors,
             description_placeholders={
-                "examples": "E18, VT4, Perämerentie, Hämeentie"
+                "examples": "Search for road section (E4, E75 for instance), city, or area (Kemintie, Hämeentie)"
             },
         )
 

@@ -3,9 +3,9 @@
     "step": {
       "user": {
         "title": "Search Road Section",
-        "description": "Enter a road number, location name, or road section description to find the road section you want to monitor. Examples: {examples}",
+        "description": "Search for a specific road section by road number (E18, E75), route number (VT1, VT4), location name (Kemintie, Hämeentie), or area. Examples: {examples}",
         "data": {
-          "search_query": "Search road (e.g., E18, VT4, Perämerentie)"
+          "search_query": "Search road section, city, or area"
         }
       },
       "select": {
