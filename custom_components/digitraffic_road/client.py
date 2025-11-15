@@ -369,16 +369,10 @@ class DigitraficClient:
         properties = feature.get("properties", {})
         
         condition_text = properties.get("condition", "Unknown")
-        reliability = properties.get("reliability", "")
-        location = properties.get("location", "")
-        
-        result = condition_text
-        if location:
-            result = f"{location}: {condition_text}"
-        if reliability:
-            result += f" (Reliability: {reliability}%)"
-        
-        return result
+        # Return only the plain condition text for the sensor state.
+        # Additional details (reliability, last_updated) are exposed
+        # as entity attributes by the sensor implementation.
+        return condition_text
 
     def parse_forecast(self, data: Dict[str, Any]) -> str:
         """Parse forecast data into human-readable text."""
