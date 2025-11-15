@@ -476,8 +476,9 @@ class DigitraficClient:
                 if pid not in best or score > best[pid][0]:
                     best[pid] = (score, p)
 
-            scored = sorted((s, p) for s, p in best.values())
-            scored.reverse()
+            # Sort by score (descending) without attempting to compare dicts.
+            # Using a key avoids TypeError when scores tie and dicts would be compared.
+            scored = sorted(best.values(), key=lambda x: -x[0])
             return [p for _, p in scored[:max_results]]
         except Exception as err:
             _LOGGER.debug("Error searching TMS stations: %s", err)
