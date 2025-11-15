@@ -383,9 +383,54 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
         # Return unavailable state instead of None to distinguish from "no data yet"
         return None
 
-    @property\n    def available(self) -> bool:\n        \"\"\"Return if entity is available.\"\"\"\n        # Sensor is available if coordinator is successful AND we have data for this measurement\n        if not self.coordinator.last_update_success:\n            return False\n            \n        # Check if we have actual measurement data\n        data = self.coordinator.data or {}\n        measurements = data.get(\"measurements\") or {}\n        sensor_constants = data.get(\"sensor_constants\") or {}\n        \n        # Available if we have either measurement data or sensor constant data\n        has_measurement = isinstance(measurements, dict) and self.measure_key in measurements\n        has_constant = False\n        if isinstance(sensor_constants, dict):\n            vals = sensor_constants.get(\"sensorConstantValues\", [])\n            has_constant = any(v.get(\"name\") == self.measure_key for v in vals)\n            \n        return has_measurement or has_constant"
+    @property
+    def available(self) -> bool:
+        """Return if entity is available."""
+        # Sensor is available if coordinator is successful AND we have data for this measurement
+        if not self.coordinator.last_update_success:
+            return False
+            
+        # Check if we have actual measurement data
+        data = self.coordinator.data or {}
+        measurements = data.get("measurements") or {}
+        sensor_constants = data.get("sensor_constants") or {}
+        
+        # Available if we have either measurement data or sensor constant data
+        has_measurement = isinstance(measurements, dict) and self.measure_key in measurements
+        has_constant = False
+        if isinstance(sensor_constants, dict):
+            vals = sensor_constants.get("sensorConstantValues", [])
+            has_constant = any(v.get("name") == self.measure_key for v in vals)
+            
+        return has_measurement or has_constant
 
-    @property\n    def native_unit_of_measurement(self) -> str | None:\n        \"\"\"Return the unit of measurement from coordinator data.\"\"\"\n        data = self.coordinator.data or {}\n        measurements = data.get(\"measurements\") or {}\n        if isinstance(measurements, dict) and self.measure_key in measurements:\n            m = measurements.get(self.measure_key)\n            if isinstance(m, dict) and \"unit\" in m:\n                unit = m.get(\"unit\")\n                _LOGGER.debug(\"Unit for %s: %s\", self.measure_key, unit)\n                # Handle special unit cases (°, km/h, %, kpl/h)\n                if unit == \"***\":\n                    return \"%\"  # Common placeholder for percentage\n                # For speed measurements, ensure we have km/h\n                if \"KESKINOPEUS\" in self.measure_key and unit in [\"km/h\", \"kmh\", \"km\"]:\n                    return \"km/h\"\n                return unit\n                \n        # Default units based on measurement type\n        if \"KESKINOPEUS\" in self.measure_key:\n            return \"km/h\"\n        elif \"OHITUKSET\" in self.measure_key:\n            return \"count\"\n        elif \"VVAPAAS\" in self.measure_key:\n            return \"%\"\n            \n        return None"
+    @property
+    def native_unit_of_measurement(self) -> str | None:
+        """Return the unit of measurement from coordinator data."""
+        data = self.coordinator.data or {}
+        measurements = data.get("measurements") or {}
+        if isinstance(measurements, dict) and self.measure_key in measurements:
+            m = measurements.get(self.measure_key)
+            if isinstance(m, dict) and "unit" in m:
+                unit = m.get("unit")
+                _LOGGER.debug("Unit for %s: %s", self.measure_key, unit)
+                # Handle special unit cases (°, km/h, %, kpl/h)
+                if unit == "***":
+                    return "%"  # Common placeholder for percentage
+                # For speed measurements, ensure we have km/h
+                if "KESKINOPEUS" in self.measure_key and unit in ["km/h", "kmh", "km"]:
+                    return "km/h"
+                return unit
+                
+        # Default units based on measurement type
+        if "KESKINOPEUS" in self.measure_key:
+            return "km/h"
+        elif "OHITUKSET" in self.measure_key:
+            return "count"
+        elif "VVAPAAS" in self.measure_key:
+            return "%"
+            
+        return None
 
     @property
     def icon(self) -> str:
