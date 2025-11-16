@@ -17,7 +17,7 @@ A Home Assistant custom integration that provides real-time road conditions and 
 
 ### ⚙️ Integration Features
 - **Multi-language UI**: Choose between Finnish and English during setup
-- **Flexible Search**: Search by road number (e.g., "VT4"), location name, or exact road section title
+- **Search with FinTraffic titles**: Search by road section name (e.g., "Tie 3: Valtatie 3 3.250") or TMS/LAM name (e.g., "vt4 Simo Saukkoranta")
 - **Multiple Instances**: Monitor unlimited road sections and TMS stations simultaneously
 - **Auto-updates**: Data refreshes every 5 minutes
 - **Reliability Indicators**: Shows data quality percentage for road conditions
