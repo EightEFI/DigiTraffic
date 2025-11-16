@@ -5,7 +5,7 @@
         "title": "Choose language / Valitse kieli",
         "description": "Valitse haluamasi käyttöliittymän kieli (Suomi tai English).",
         "data": {
-          "language": "Kieli"
+          "language": "Choose language / Valitse kieli"
         }
       },
       "monitor_type": {
@@ -22,7 +22,7 @@
         "title": "Lisää tieosuus",
         "description": "Syötä tarkka tieosuuden otsikko sivulta https://liikennetilanne.fintraffic.fi/kartta/\n\nKlikkaa tieosuutta FinTraffic kartalla ja kopioi tieosuus (esim. \"{example}\").\n\nTämä mahdollistaa tietyn tieosuuden olosuhteiden noutamisen",
         "data": {
-          "section_input": "Tieosuuden otsikko (kopioi FinTraffic kartalta)"
+          "road_section": "Liitä tähän tieosuuden otsikko"
         }
       }
       ,
@@ -30,13 +30,29 @@
         "title": "Lisää TMS / LAM asema",
         "description": "Syötä TMS/LAM -aseman nimi tai tunniste (esim. 'vt4 Simo Saukkoranta').",
         "data": {
-          "tms_input": "TMS/LAM aseman nimi tai id"
+          "tms_id": "Liitä tähän LAM pisteen otsikko"
+        }
+      },
+      "pick": {
+        "title": "Valitse tarkka tieosuus",
+        "description": "Useita tuloksia löytyi. Valitse tarkka tieosuus.",
+        "data": {
+          "pick": "Valitse tieosuus"
+        }
+      },
+      "tms_pick": {
+        "title": "Valitse tarkka LAM asema",
+        "description": "Useita tuloksia löytyi. Valitse tarkka LAM asema.",
+        "data": {
+          "pick": "Valitse LAM asema"
         }
       }
     },
     "error": {
       "empty_search": "Syötä tieosuuden otsikko FinTraffic kartalta",
       "no_results": "Ei tuloksia. Yritä eri tieosuutta tai sijaintia.",
+      "no_matches": "Ei tuloksia",
+      "invalid_selection": "Virheellinen valinta, valitse kelvollinen vaihtoehto",
       "cannot_connect": "Ei voitu yhdistää Digitraffic -palveluihin. Yritä myöhemmin uudelleen.",
       "unknown": "Tapahtui odottamaton virhe"
     },

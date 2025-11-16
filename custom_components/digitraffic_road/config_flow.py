@@ -30,8 +30,8 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initial step: ask preferred language, then proceed to section input."""
         errors = {}
         # If language selected, move to monitor type step
-        if user_input is not None and "language" in user_input:
-            self.language = user_input.get("language")
+        if user_input is not None and CONF_LANGUAGE in user_input:
+            self.language = user_input.get(CONF_LANGUAGE)
             return await self.async_step_monitor_type()
 
         # Show language selection form
@@ -39,7 +39,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required("language", default="fi"): vol.In({"fi": "Suomi", "en": "English"}),
+                    vol.Required(CONF_LANGUAGE, default="fi"): vol.In({"fi": "Suomi", "en": "English"}),
                 }
             ),
         )
@@ -47,8 +47,8 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_monitor_type(self, user_input=None):
         """Ask whether to monitor driving conditions or a TMS/LAM station."""
 
-        if user_input is not None and "monitor_type" in user_input:
-            self.monitor_type = user_input.get("monitor_type")
+        if user_input is not None and CONF_MONITOR_TYPE in user_input:
+            self.monitor_type = user_input.get(CONF_MONITOR_TYPE)
             if self.monitor_type == MONITOR_TMS:
                 return await self.async_step_tms()
             return await self.async_step_section()
@@ -67,7 +67,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        "monitor_type",
+                        CONF_MONITOR_TYPE,
                         default=MONITOR_CONDITIONS,
                     ): vol.In({MONITOR_CONDITIONS: conditions_label, MONITOR_TMS: tms_label}),
                 }
@@ -80,7 +80,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # If user submitted input
         if user_input is not None:
-            section_input = user_input.get("section_input", "").strip()
+            section_input = user_input.get(CONF_ROAD_SECTION, "").strip()
 
             if not section_input:
                 errors["base"] = "empty_search"
@@ -137,7 +137,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="section",
             data_schema=vol.Schema(
                 {
-                    vol.Required("section_input", description={"suggested_value": "Tie 4: Kemintie 4.421"}): str,
+                    vol.Required(CONF_ROAD_SECTION, description={"suggested_value": "Tie 4: Kemintie 4.421"}): str,
                 }
             ),
             errors=errors,
@@ -209,7 +209,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # If user submitted input
         if user_input is not None:
-            tms_input = user_input.get("tms_input", "").strip()
+            tms_input = user_input.get(CONF_TMS_ID, "").strip()
             if not tms_input:
                 errors["base"] = "empty_search"
             else:
@@ -246,7 +246,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="tms",
-            data_schema=vol.Schema({vol.Required("tms_input", description={"suggested_value": "Tie 3 Vaasa"}): str}),
+            data_schema=vol.Schema({vol.Required(CONF_TMS_ID, description={"suggested_value": "Tie 3 Vaasa"}): str}),
             errors=errors,
         )
 
