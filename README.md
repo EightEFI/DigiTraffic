@@ -244,14 +244,14 @@ template:
           {% endif %}
 ```
 
-### Dashboard Card with ApexChart Card
+### Dashboard Card with ApexCharts-Card
 
 ```yaml
 type: custom:apexcharts-card
-graph_span: 72hours
+graph_span: 12hours
 header:
   show: true
-  title: 5 minute rolling average speed
+  title: 5 minute rolling average ammount
   show_states: true
   colorize_states: true
 apex_config:
@@ -263,22 +263,24 @@ experimental:
 show:
   last_updated: true
 series:
-  - entity: sensor.vt4_marostenmaki_keskinopeus_5min_liukuva_suunta1
+  - entity: sensor.vt4_marostenmaki_ohitukset_5min_liukuva_suunta1
     type: line
-    stroke_width: 2
-    unit: "km/h"
+    stroke_width: 1
+    unit: pcs/h
     name: Direction 1
     show:
       legend_value: false
-  - entity: sensor.vt4_marostenmaki_keskinopeus_5min_liukuva_suunta2
+  - entity: sensor.vt4_marostenmaki_ohitukset_5min_liukuva_suunta2
     type: line
-    stroke_width: 2
-    unit: "km/h"
+    stroke_width: 1
+    unit: pcs/h
     name: Direction 2
     show:
       legend_value: false
-
 ```
+![alt text](https://i.imgur.com/SeREpr9.png "Dashboard card using ApexCharts-card")
+https://i.imgur.com/SeREpr9.png
+
 
 ## Technical Details
 
