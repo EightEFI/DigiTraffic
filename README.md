@@ -147,6 +147,47 @@ Read more about datapoints here: https://www.digitraffic.fi/tieliikenne/lam/
 
 ## Usage Examples
 
+
+### Dashboard card for Forecast using Mushroom-template-card
+
+```yaml
+type: custom:mushroom-template-card
+primary: Ennuste
+icon: mdi:weather-partly-rainy
+multiline_secondary: true
+secondary: >-
+  {% set fc = state_attr('sensor.kemintie_4_421_forecast', 'forecast_data') or
+  [] %} {% for item in fc %} {{- '\n' if not loop.first else '' -}} {{
+  item['time'] }} {{ item['condition'] }} {% endfor %}
+```
+
+![alt text](https://i.imgur.com/uygpAqu.png "Dashboard card using Mushroom-template-card")
+
+### Dashboard card for current conditions using [Mushroom-template-card](https://github.com/piitaya/lovelace-mushroom)
+
+```yaml
+type: markdown
+content: |
+  **Kemintie Vt4 ajokeli**
+
+  {% set cond = states('sensor.kemintie_4_421_current_conditions') %}
+
+  {% if 'Erittäin huono' in cond %}
+  <ha-alert alert-type="error">Erittäin huono ajokeli</ha-alert>
+
+  {% elif 'Huono' in cond %}
+  <ha-alert alert-type="error">Huono ajokeli</ha-alert>
+
+  {% elif 'Hyvä' in cond %}
+  <ha-alert alert-type="success">Hyvä ajokeli</ha-alert>
+
+  {% else %}
+  <ha-alert alert-type="info">{{ cond }}</ha-alert>
+  {% endif %}
+```
+
+![alt text](https://i.imgur.com/4hLhVVM.png "Dashboard card using Mushroom-template-card")
+
 ### Automation: Poor Road Conditions Alert
 
 ```yaml
