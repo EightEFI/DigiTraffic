@@ -176,7 +176,7 @@ content: |
   <ha-alert alert-type="error">Erittäin huono ajokeli</ha-alert>
 
   {% elif 'Huono' in cond %}
-  <ha-alert alert-type="error">Huono ajokeli</ha-alert>
+  <ha-alert alert-type="warning">Huono ajokeli</ha-alert>
 
   {% elif 'Hyvä' in cond %}
   <ha-alert alert-type="success">Hyvä ajokeli</ha-alert>
@@ -186,7 +186,7 @@ content: |
   {% endif %}
 ```
 
-![alt text](https://i.imgur.com/4hLhVVM.png "Dashboard card using Mushroom-template-card")
+![alt text](https://i.imgur.com/AAOkigF.png "Dashboard card using Mushroom-template-card")
 
 ### Automation: Poor Road Conditions Alert
 
