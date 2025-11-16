@@ -148,7 +148,7 @@ Read more about datapoints here: https://www.digitraffic.fi/tieliikenne/lam/
 ## Usage Examples
 
 
-### Dashboard card for Forecast using Mushroom-template-card
+### Dashboard card for Forecast using [Mushroom-template-card](https://github.com/piitaya/lovelace-mushroom)
 
 ```yaml
 type: custom:mushroom-template-card
@@ -163,7 +163,7 @@ secondary: >-
 
 ![alt text](https://i.imgur.com/uygpAqu.png "Dashboard card using Mushroom-template-card")
 
-### Dashboard card for current conditions using [Mushroom-template-card](https://github.com/piitaya/lovelace-mushroom)
+### Dashboard card for current conditions using Markdown card
 
 ```yaml
 type: markdown
