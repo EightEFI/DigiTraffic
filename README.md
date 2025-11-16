@@ -46,7 +46,7 @@ A Home Assistant custom integration that provides real-time road conditions and 
 Before setting up the integration, find the road section(s) or traffic station(s) you want to monitor:
 
 1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
-2. **For Road Conditions**: Click on any road section you want to add to HA (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250" or "Tie 10: Turun valtatie 10.24")
+2. **For Road Conditions**: On the map layers, activate Road Conditions. Click on any road section you want to add to HA (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250" or "Tie 10: Turun valtatie 10.24")
 3. **For Traffic Stations (LAM/TMS)**: Look for two arrows (<•>), click them, and copy the station name (e.g., "vt4 Simo Saukkoranta" or "Tie 9 Orivesi, Talviainen")
 
 Keep this information ready - you'll need it during the integration setup!
