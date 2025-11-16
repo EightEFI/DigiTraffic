@@ -26,7 +26,7 @@
         "title": "Choose the type",
         "description": "Choose what to monitor for the selected road section.",
         "data": {
-          "monitor_type": "Choose type"
+          "monitor_type": "Choose the type"
         },
         "data_description": {
           "monitor_type": "Driving condition in a road section or Traffic measuring station (TMS)"
