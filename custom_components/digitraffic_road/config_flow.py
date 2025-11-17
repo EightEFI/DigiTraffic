@@ -3,6 +3,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers import selector
 import logging
 
 from .client import DigitraficClient
@@ -48,7 +49,13 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_MONITOR_TYPE,
                         default=MONITOR_CONDITIONS,
-                    ): vol.In([MONITOR_CONDITIONS, MONITOR_TMS]),
+                    ): selector.SelectSelector(
+                        selector.SelectSelectorConfig(
+                            options=[MONITOR_CONDITIONS, MONITOR_TMS],
+                            mode=selector.SelectSelectorMode.LIST,
+                            translation_key="monitor_type",
+                        )
+                    ),
                 }
             ),
         )
