@@ -11,8 +11,8 @@
       "selector": {
         "monitor_type": {
           "options": {
-            "conditions": "Ajokeli",
-            "tms": "Liikenteen Automaattinen Mittauspiste (LAM)"
+            "conditions": "Keliolosuhteet tieosuudella",
+            "tms": "Liikenteen automaattinen mittausasema (LAM)"
           }
         }
       },
