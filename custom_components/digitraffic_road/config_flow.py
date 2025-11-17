@@ -27,22 +27,10 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
-        """Initial step: ask preferred language, then proceed to section input."""
-        errors = {}
-        # If language selected, move to monitor type step
-        if user_input is not None and CONF_LANGUAGE in user_input:
-            self.language = user_input.get(CONF_LANGUAGE)
-            return await self.async_step_monitor_type()
-
-        # Show language selection form
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_LANGUAGE, default="fi"): vol.In(["fi", "en"]),
-                }
-            ),
-        )
+        """Initial step: go directly to monitor type selection."""
+        # Use Home Assistant's language setting
+        self.language = self.hass.config.language or "en"
+        return await self.async_step_monitor_type(user_input)
 
     async def async_step_monitor_type(self, user_input=None):
         """Ask whether to monitor driving conditions or a TMS/LAM station."""
@@ -104,7 +92,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                     data = {
                         CONF_MONITOR_TYPE: monitor_type,
-                        CONF_LANGUAGE: getattr(self, "language", "fi"),
+                        CONF_LANGUAGE: getattr(self, "language", "en"),
                     }
 
                     if monitor_type == MONITOR_CONDITIONS:
@@ -164,7 +152,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 data = {
                     CONF_MONITOR_TYPE: monitor_type,
-                    CONF_LANGUAGE: getattr(self, "language", "fi"),
+                    CONF_LANGUAGE: getattr(self, "language", "en"),
                 }
                 if monitor_type == MONITOR_CONDITIONS:
                     data.update({CONF_ROAD_SECTION_ID: chosen_id, CONF_ROAD_SECTION: section_name})
@@ -224,7 +212,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                     data = {
                         CONF_MONITOR_TYPE: monitor_type,
-                        CONF_LANGUAGE: getattr(self, "language", "fi"),
+                        CONF_LANGUAGE: getattr(self, "language", "en"),
                     }
                     data.update({CONF_TMS_ID: chosen_id, CONF_ROAD_SECTION: section_name})
 
@@ -263,7 +251,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
                 data = {
                     CONF_MONITOR_TYPE: monitor_type,
-                    CONF_LANGUAGE: getattr(self, "language", "fi"),
+                    CONF_LANGUAGE: getattr(self, "language", "en"),
                 }
                 data.update({CONF_TMS_ID: chosen_id, CONF_ROAD_SECTION: section_name})
 

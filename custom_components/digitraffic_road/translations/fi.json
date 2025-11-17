@@ -1,29 +1,16 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Valitse kieli",
-        "description": "Valitse käyttöliittymän kieli tälle integraatiolle (Suomi tai English).",
-        "data": {
-          "language": "Kieli"
-        },
-        "data_description": {
-          "language": {
-            "fi": "Suomi",
-            "en": "Englanti"
-          }
-        }
-      },
       "monitor_type": {
-        "title": "Valitse tyyppi",
+        "title": "Valitse seurantatyyppi",
         "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
         "data": {
           "monitor_type": "Seurannan tyyppi"
         },
         "data_description": {
           "monitor_type": {
-            "conditions": "Ajokeli tieosuudella",
-            "tms": "Liikenteen automaattinen mittausasema (LAM)"
+            "conditions": "Ajokeli",
+            "tms": "Liikenteen Automaattinen Mittauspiste (LAM)"
           }
         }
       },
@@ -35,8 +22,8 @@
         }
       },
       "tms": {
-        "title": "Lisää TMS / LAM asema",
-        "description": "Syötä TMS/LAM -aseman nimi tai tunniste (esim. 'vt4 Simo Saukkoranta').",
+        "title": "Lisää LAM asema",
+        "description": "Syötä LAM pisteen FinTrafficin mukainen otsikko (esim. 'vt4 Simo Saukkoranta')",
         "data": {
           "tms_id": "TMS asema"
         }

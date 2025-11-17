@@ -1,19 +1,6 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Choose language",
-        "description": "Select UI language for this integration (Finnish or English).",
-        "data": {
-          "language": "Language"
-        },
-        "data_description": {
-          "language": {
-            "fi": "Finnish",
-            "en": "English"
-          }
-        }
-      },
       "monitor_type": {
         "title": "Choose the type",
         "description": "Choose what to monitor for the selected road section.",
