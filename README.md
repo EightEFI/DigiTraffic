@@ -4,16 +4,21 @@ A Home Assistant custom integration that provides real-time road conditions and 
 
 ## Features
 
-### 🚗 Road Conditions/Ajokeli
+### 🚗 Road Conditions / Ajokeli
 - **Current Conditions**: Real-time driving conditions for specific road sections
 - **Weather Forecast**: Time-stamped hourly forecasts with road condition predictions
 - **Smart Resolution**: Automatically finds road sections by entering road names or titles from the Fintraffic map
 
-### 📊 Traffic Measurement Station/Liikenteen Automaattinen Mittausasema (TMS/LAM)
+### 📊 Traffic Measurement Stations / Liikenteen Automaattinen Mittausasema (TMS/LAM)
 - **Speed Measurements**: Rolling and fixed average speeds in both directions
 - **Traffic Counts**: Vehicle overtaking counts per direction and lane
 - **Sensor Constants**: Access to station-specific calibration values (VVAPAAS, lane references)
-- **Per-Station Metrics**: Multiple (19pcs) sensors per station for comprehensive traffic monitoring
+- **Per-Station Metrics**: Multiple sensors per station for comprehensive traffic monitoring
+
+### 🌡 Road Weather Stations / Tiesääasemat
+- **Live Measurements**: Air, road-surface and ground temperatures, dew point, humidity, wind, precipitation, visibility, and more
+- **Dynamic Sensors**: Entities appear only for measurements the station actually reports, with new sensors added automatically when new data streams become active
+- **Textual States**: Weather descriptions, precipitation forms, warnings and road-condition codes rendered in Finnish or English based on integration language
 
 ### ⚙️ Integration Features
 - **Multi-language UI**: Choose between Finnish and English during setup
@@ -43,11 +48,12 @@ A Home Assistant custom integration that provides real-time road conditions and 
 
 ### Quick Start
 
-Before setting up the integration, find the road section(s) or traffic station(s) you want to monitor:
+Before setting up the integration, find the road section(s), traffic station(s) or road weather station(s) you want to monitor:
 
 1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
 2. **For Road Conditions**: On the map layers, activate Road Conditions. Click on any road section you want to add to HA (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250" or "Tie 10: Turun valtatie 10.24")
 3. **For Traffic Stations (LAM/TMS)**: On the map layers, activate Traffic volume, then look for two arrows (<•>), click them, and copy the station name (e.g., "vt4 Simo Saukkoranta" or "Tie 9 Orivesi, Talviainen")
+4. **For Road Weather Stations**: On the map layers, activate Weather stations, select the thermometer icon, and copy the station name (e.g., "vt1 Espoo Nupuri")
 
 Keep this information ready - you'll need it during the integration setup!
 
@@ -78,6 +84,17 @@ The integration creates multiple sensors per station:
 - Speed measurements (rolling/fixed averages, both directions)
 - Traffic counts (overtakes per direction and lane)
 - Sensor constants
+
+### Adding Road Weather Station
+
+1. Go to **Settings** → **Devices & Services** → **Add Integration**
+2. Search for "**DigiTraffic**"
+3. **Select Language**: Choose Finnish or English
+4. **Choose Type**: Select "Tiesääasema" or "Road weather station"
+5. **Enter Station Name**: Paste the station label copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt1 Espoo Nupuri")
+6. Pick the exact station if multiple matches are found
+
+The integration creates one sensor per measurement reported by the station (air temperature, road temperature lanes, wind, precipitation, visibility, warnings, etc.). Sensors appear only for values present in the live API payload, so your entity list matches the station’s capabilities.
 
 ## Entities
 
@@ -127,6 +144,17 @@ Each TMS station creates multiple sensors for different measurements:
 - `sensor.<station>_sensor_constants` - Station calibration values as attributes
 
 Read more about datapoints here: https://www.digitraffic.fi/tieliikenne/lam/
+
+### Road Weather Station Sensors
+
+Each weather station exposes entities for every measurement in the live data feed:
+
+- **Core temperatures**: `sensor.<station>_ilma`, `sensor.<station>_tie_1`, `sensor.<station>_maa_1`, etc.
+- **Derived metrics**: `sensor.<station>_ilma_derivaatta`, `sensor.<station>_tie_1_derivaatta`, dew point, freezing point
+- **Atmospheric data**: humidity, wind speed/direction, visibility, precipitation intensity and amount
+- **Qualitative states**: precipitation form (`sensor.<station>_sateen_olomuoto_pwdxx`), road condition lanes, warnings (values rendered as translated text)
+
+If a new measurement type starts publishing (for example an additional road-surface probe), the integration will register the matching entity automatically after the next data refresh.
 
 ## Road Condition Reference
 
@@ -398,6 +426,8 @@ Contributions are welcome! Please feel free to submit issues or pull requests on
 **Repository**: https://github.com/EightEFI/DigiTraffic
 
 ## License
+
+This project is distributed under the [MIT License](LICENSE).
 
 This project is licensed under the terms specified in the LICENSE file.
 
