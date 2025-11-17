@@ -58,7 +58,7 @@
     }
   },
   "selector": {
-    "monitor_type": {
+    "monitor_type_selector": {
       "options": {
         "conditions": "Driving condition in a road section",
         "tms": "Traffic measuring station (TMS)"

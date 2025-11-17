@@ -53,7 +53,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         selector.SelectSelectorConfig(
                             options=[MONITOR_CONDITIONS, MONITOR_TMS],
                             mode=selector.SelectSelectorMode.LIST,
-                            translation_key="monitor_type",
+                            translation_key="monitor_type_selector",
                         )
                     ),
                 }

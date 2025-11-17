@@ -58,7 +58,7 @@
     }
   },
   "selector": {
-    "monitor_type": {
+    "monitor_type_selector": {
       "options": {
         "conditions": "Keliolosuhteet tieosuudella",
         "tms": "Liikenteen automaattinen mittausasema (LAM)"
