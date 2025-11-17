@@ -53,7 +53,7 @@ Before setting up the integration, find the road section(s), traffic station(s) 
 1. **Open the Fintraffic map**: [https://liikennetilanne.fintraffic.fi/kartta/](https://liikennetilanne.fintraffic.fi/kartta/)
 2. **For Road Conditions**: On the map layers, activate Road Conditions. Click on any road section you want to add to HA (colored lines on the map) and copy the title shown (e.g., "Tie 3: Valtatie 3 3.250" or "Tie 10: Turun valtatie 10.24")
 3. **For Traffic Stations (LAM/TMS)**: On the map layers, activate Traffic volume, then look for two arrows (<•>), click them, and copy the station name (e.g., "vt4 Simo Saukkoranta" or "Tie 9 Orivesi, Talviainen")
-4. **For Road Weather Stations**: On the map layers, activate Weather stations, select the thermometer icon, and copy the station name (e.g., "vt1 Espoo Nupuri")
+4. **For Road Weather Stations**: On the map layers, activate Weather stations, select the blip icon that has something weather related usually, and copy the station name (e.g., "vt1 Espoo Nupuri")
 
 Keep this information ready - you'll need it during the integration setup!
 
@@ -61,11 +61,10 @@ Keep this information ready - you'll need it during the integration setup!
 ### Adding Road Condition Monitoring
 
 1. Go to **Settings** → **Devices & Services** → **Add Integration**
-2. Search for "**DigiTraffic**"
-3. **Select Language**: Choose Finnish or English
-4. **Choose Type**: Select "Ajokeli tieosuudella" or "Driving condition in a road section"
-5. **Enter Road Section**: Paste the road section title you copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "Tie 3: Valtatie 3 3.250")
-6. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
+2. Search for "**DigiTraffic**
+3. **Choose Type**: Select "Ajokeli tieosuudella" or "Driving condition in a road section"
+4. **Enter Road Section**: Paste the road section title you copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "Tie 3: Valtatie 3 3.250")
+5. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
 
 The integration will create two entities in the instance of "Tie 3: Valtatie 3 3.250" for example:
 - **Current Conditions** sensor (e.g., Eng `sensor.valtatie_3_3_250_current_conditions`, or Fin `sensor.valtatie_3_3_250_ajokeli_tällä_hetkellä`)
@@ -74,11 +73,10 @@ The integration will create two entities in the instance of "Tie 3: Valtatie 3 3
 ### Adding Traffic Measurement Station (TMS/LAM)
 
 1. Go to **Settings** → **Devices & Services** → **Add Integration**
-2. Search for "**DigiTraffic**"
-3. **Select Language**: Choose Finnish or English
-4. **Choose Type**: Select "Liikenteen automaattinen mittausasema (LAM)" or "Traffic measuring station (TMS)"
-5. **Enter Station Name**: Type the station name you noted from the [Fintraffic map under Traffic volume](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt4 Simo Saukkoranta")
-6. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
+2. Search for "**DigiTraffic**
+3. **Choose Type**: Select "Liikenteen automaattinen mittausasema (LAM)" or "Traffic measuring station (TMS)"
+4. **Enter Station Name**: Type the station name you noted from the [Fintraffic map under Traffic volume](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt4 Simo Saukkoranta")
+5. If there are multiple search results, select the desired station from search results, otherwise this step is skipped automatically
 
 The integration creates multiple sensors per station:
 - Speed measurements (rolling/fixed averages, both directions)
@@ -89,12 +87,11 @@ The integration creates multiple sensors per station:
 
 1. Go to **Settings** → **Devices & Services** → **Add Integration**
 2. Search for "**DigiTraffic**"
-3. **Select Language**: Choose Finnish or English
-4. **Choose Type**: Select "Tiesääasema" or "Road weather station"
-5. **Enter Station Name**: Paste the station label copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt1 Espoo Nupuri")
-6. Pick the exact station if multiple matches are found
+3. **Choose Type**: Select "Tiesääasema" or "Road weather station"
+4. **Enter Station Name**: Paste the station label copied from the [Fintraffic map](https://liikennetilanne.fintraffic.fi/kartta/) (e.g., "vt1 Espoo Nupuri")
+5. Pick the exact station if multiple matches are found
 
-The integration creates one sensor per measurement reported by the station (air temperature, road temperature lanes, wind, precipitation, visibility, warnings, etc.). Sensors appear only for values present in the live API payload, so your entity list matches the station’s capabilities.
+The integration creates one sensor per measurement reported by the station (air temperature, road temperature lanes, wind, precipitation, visibility, warnings (diagnostics about sensors), etc.). Sensors appear only for values present in the live API payload, so your entity list matches the station’s capabilities.
 
 ## Entities
 
