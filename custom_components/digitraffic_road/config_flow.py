@@ -39,7 +39,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_LANGUAGE, default="fi"): vol.In({"fi": "Suomi", "en": "English"}),
+                    vol.Required(CONF_LANGUAGE, default="fi"): vol.In(["fi", "en"]),
                 }
             ),
         )
@@ -53,15 +53,6 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return await self.async_step_tms()
             return await self.async_step_section()
 
-        # Set labels based on selected language
-        language = getattr(self, "language", "fi")
-        if language == "fi":
-            conditions_label = "Ajokeli tieosuudella"
-            tms_label = "Liikenteen automaattinen mittausasema (LAM)"
-        else:
-            conditions_label = "Driving condition in a road section"
-            tms_label = "Traffic measuring station (TMS)"
-
         return self.async_show_form(
             step_id="monitor_type",
             data_schema=vol.Schema(
@@ -69,7 +60,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_MONITOR_TYPE,
                         default=MONITOR_CONDITIONS,
-                    ): vol.In({MONITOR_CONDITIONS: conditions_label, MONITOR_TMS: tms_label}),
+                    ): vol.In([MONITOR_CONDITIONS, MONITOR_TMS]),
                 }
             ),
         )
@@ -137,7 +128,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="section",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_ROAD_SECTION, description={"suggested_value": "Tie 4: Kemintie 4.421"}): str,
+                    vol.Required(CONF_ROAD_SECTION): str,
                 }
             ),
             errors=errors,
@@ -246,7 +237,7 @@ class DigitraficRoadConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         return self.async_show_form(
             step_id="tms",
-            data_schema=vol.Schema({vol.Required(CONF_TMS_ID, description={"suggested_value": "Tie 3 Vaasa"}): str}),
+            data_schema=vol.Schema({vol.Required(CONF_TMS_ID): str}),
             errors=errors,
         )
 

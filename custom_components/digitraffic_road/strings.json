@@ -6,6 +6,12 @@
         "description": "Valitse haluamasi käyttöliittymän kieli (Suomi tai English).",
         "data": {
           "language": "Choose language / Valitse kieli"
+        },
+        "data_description": {
+          "language": {
+            "fi": "Suomi",
+            "en": "English"
+          }
         }
       },
       "monitor_type": {
@@ -15,7 +21,10 @@
           "monitor_type": "Valitse tyyppi"
         },
         "data_description": {
-          "monitor_type": "Ajokeli tieosuudella tai Liikenteen automaattinen mittausasema (LAM)"
+          "monitor_type": {
+            "conditions": "Ajokeli tieosuudella",
+            "tms": "Liikenteen automaattinen mittausasema (LAM)"
+          }
         }
       },
       "section": {

@@ -6,6 +6,12 @@
         "description": "Select UI language for this integration (Finnish or English).",
         "data": {
           "language": "Choose language / Valitse kieli"
+        },
+        "data_description": {
+          "language": {
+            "fi": "Suomi",
+            "en": "English"
+          }
         }
       },
       "section": {
@@ -29,7 +35,10 @@
           "monitor_type": "Choose the type"
         },
         "data_description": {
-          "monitor_type": "Driving condition in a road section or Traffic measuring station (TMS)"
+          "monitor_type": {
+            "conditions": "Driving condition in a road section",
+            "tms": "Traffic measuring station (TMS)"
+          }
         }
       },
       "pick": {
