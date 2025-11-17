@@ -1,4 +1,4 @@
-# FinTraffic Road Conditions and TMS data
+# FinTraffic Road Conditions, TMS data and Road Weather Station data
 
 A Home Assistant custom integration that provides real-time road conditions and traffic data from Finland's [DigiTraffic](https://www.digitraffic.fi/) service's open data sources in Finnish and English. DigiTraffic is service for the open data for application development from Finnish road, railway and marine traffic. One of the most well known services that use DigiTraffic data is the [FinnTraffic map](https://liikennetilanne.fintraffic.fi/kartta/). [FinTraffic](https://www.fintraffic.fi/fi) is a special-purpose group which is fully owned by the Finnish state.
 
