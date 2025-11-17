@@ -1,0 +1,79 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Valitse kieli",
+        "description": "Valitse käyttöliittymän kieli tälle integraatiolle (Suomi tai English).",
+        "data": {
+          "language": "Kieli"
+        },
+        "data_description": {
+          "language": {
+            "fi": "Suomi",
+            "en": "Englanti"
+          }
+        }
+      },
+      "monitor_type": {
+        "title": "Valitse tyyppi",
+        "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
+        "data": {
+          "monitor_type": "Seurannan tyyppi"
+        },
+        "data_description": {
+          "monitor_type": {
+            "conditions": "Ajokeli tieosuudella",
+            "tms": "Liikenteen automaattinen mittausasema (LAM)"
+          }
+        }
+      },
+      "section": {
+        "title": "Lisää tieosuus",
+        "description": "Syötä tarkka tieosuuden otsikko sivulta https://liikennetilanne.fintraffic.fi/kartta/\n\nKlikkaa tieosuutta FinTraffic kartalla ja kopioi tieosuus (esim. \"{example}\").\n\nTämä mahdollistaa tietyn tieosuuden olosuhteiden noutamisen",
+        "data": {
+          "road_section": "Tieosuuden otsikko"
+        }
+      },
+      "tms": {
+        "title": "Lisää TMS / LAM asema",
+        "description": "Syötä TMS/LAM -aseman nimi tai tunniste (esim. 'vt4 Simo Saukkoranta').",
+        "data": {
+          "tms_id": "TMS asema"
+        }
+      },
+      "pick": {
+        "title": "Valitse tarkka tieosuus",
+        "description": "Useita tuloksia löytyi. Valitse tarkka tieosuus.",
+        "data": {
+          "pick": "Valitse tieosuus"
+        }
+      },
+      "tms_pick": {
+        "title": "Valitse tarkka LAM asema",
+        "description": "Useita tuloksia löytyi. Valitse tarkka LAM asema.",
+        "data": {
+          "pick": "Valitse LAM asema"
+        }
+      }
+    },
+    "error": {
+      "empty_search": "Syötä hakutermi",
+      "no_results": "Ei tuloksia",
+      "no_matches": "Ei osumia",
+      "invalid_selection": "Virheellinen valinta, valitse kelvollinen vaihtoehto",
+      "cannot_connect": "Yhteys epäonnistui",
+      "unknown": "Tapahtui odottamaton virhe"
+    },
+    "abort": {
+      "already_configured": "Tämä tieosuus on jo konfiguroitu",
+      "cannot_connect": "Ei voitu yhdistää Digitraffic -palveluihin"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "DigiTraffic - Asetukset"
+      }
+    }
+  }
+}

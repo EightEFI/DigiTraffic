@@ -2,78 +2,77 @@
   "config": {
     "step": {
       "user": {
-        "title": "Choose language / Valitse kieli",
-        "description": "Valitse haluamasi käyttöliittymän kieli (Suomi tai English).",
+        "title": "Choose language",
+        "description": "Select UI language for this integration (Finnish or English).",
         "data": {
-          "language": "Choose language / Valitse kieli"
+          "language": "Language"
         },
         "data_description": {
           "language": {
-            "fi": "Suomi",
+            "fi": "Finnish",
             "en": "English"
           }
         }
       },
       "monitor_type": {
-        "title": "Valitse tyyppi",
-        "description": "Haluatko seurata ajokelejä (tieosuus) vai TMS/LAM-mittausasemaa?",
+        "title": "Choose the type",
+        "description": "Choose what to monitor for the selected road section.",
         "data": {
-          "monitor_type": "Valitse tyyppi"
+          "monitor_type": "Monitor type"
         },
         "data_description": {
           "monitor_type": {
-            "conditions": "Ajokeli tieosuudella",
-            "tms": "Liikenteen automaattinen mittausasema (LAM)"
+            "conditions": "Driving condition in a road section",
+            "tms": "Traffic measuring station (TMS)"
           }
         }
       },
       "section": {
-        "title": "Lisää tieosuus",
-        "description": "Syötä tarkka tieosuuden otsikko sivulta https://liikennetilanne.fintraffic.fi/kartta/\n\nKlikkaa tieosuutta FinTraffic kartalla ja kopioi tieosuus (esim. \"{example}\").\n\nTämä mahdollistaa tietyn tieosuuden olosuhteiden noutamisen",
+        "title": "Add Road Section",
+        "description": "Enter the exact road section title from https://liikennetilanne.fintraffic.fi/kartta/\n\nClick on a road section in the Fintraffic map and copy the title shown (e.g., \"{example}\").\n\nThis allows you to monitor any specific road section with its own independent driving conditions.",
         "data": {
-          "road_section": "Liitä tähän tieosuuden otsikko"
+          "road_section": "Road section title"
         }
-      }
-      ,
+      },
       "tms": {
-        "title": "Lisää TMS / LAM asema",
-        "description": "Syötä TMS/LAM -aseman nimi tai tunniste (esim. 'vt4 Simo Saukkoranta').",
+        "title": "Add TMS Station",
+        "description": "Enter the TMS/LAM station name or identifier (e.g., 'vt4 Simo Saukkoranta').",
         "data": {
-          "tms_id": "Liitä tähän LAM pisteen otsikko"
+          "tms_id": "TMS station"
         }
       },
       "pick": {
-        "title": "Valitse tarkka tieosuus",
-        "description": "Useita tuloksia löytyi. Valitse tarkka tieosuus.",
+        "title": "Choose Exact Road Section",
+        "description": "Multiple metadata entries matched your input. Pick the exact section to use.",
         "data": {
-          "pick": "Valitse tieosuus"
+          "pick": "Pick a road section"
         }
       },
       "tms_pick": {
-        "title": "Valitse tarkka LAM asema",
-        "description": "Useita tuloksia löytyi. Valitse tarkka LAM asema.",
+        "title": "Choose Exact TMS Station",
+        "description": "Multiple stations matched your input. Pick the exact station to use.",
         "data": {
-          "pick": "Valitse LAM asema"
+          "pick": "Pick a TMS station"
         }
       }
     },
     "error": {
-      "empty_search": "Syötä tieosuuden otsikko FinTraffic kartalta",
-      "no_results": "Ei tuloksia. Yritä eri tieosuutta tai sijaintia.",
-      "no_matches": "Ei tuloksia",
-      "invalid_selection": "Virheellinen valinta, valitse kelvollinen vaihtoehto",
-      "cannot_connect": "Ei voitu yhdistää Digitraffic -palveluihin. Yritä myöhemmin uudelleen.",
-      "unknown": "Tapahtui odottamaton virhe"
+      "empty_search": "Please enter a search term",
+      "no_results": "No road sections found",
+      "no_matches": "No matches",
+      "invalid_selection": "Invalid selection, please choose a valid section",
+      "cannot_connect": "Connection failed",
+      "unknown": "An unexpected error occurred"
     },
     "abort": {
-      "already_configured": "Tämä tieosuus on jo konfiguroitu",
-      "cannot_connect": "Ei voitu yhdistää Digitraffic -palveluihin"
+      "already_configured": "This road section is already configured",
+      "cannot_connect": "Cannot connect to Digitraffic services"
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "DigiTraffic - Asetukset"
+        "title": "DigiTraffic - Settings"
       }
     }
   }
