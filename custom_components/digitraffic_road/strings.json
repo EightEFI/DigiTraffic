@@ -3,12 +3,14 @@
     "step": {
       "monitor_type": {
         "title": "Choose the type",
-        "description": "Choose what kind of data do you want to monitor",
+        "description": "Choose what to monitor for the selected road section.",
         "data": {
           "monitor_type": "Monitor type"
-        },
-        "data_description": {
-          "monitor_type": {
+        }
+      },
+      "selector": {
+        "monitor_type": {
+          "options": {
             "conditions": "Driving condition in a road section",
             "tms": "Traffic measuring station (TMS)"
           }

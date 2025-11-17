@@ -6,9 +6,11 @@
         "description": "Valitse mitä datalähdettä haluat seurata",
         "data": {
           "monitor_type": "Seurannan tyyppi"
-        },
-        "data_description": {
-          "monitor_type": {
+        }
+      },
+      "selector": {
+        "monitor_type": {
+          "options": {
             "conditions": "Ajokeli",
             "tms": "Liikenteen Automaattinen Mittauspiste (LAM)"
           }
