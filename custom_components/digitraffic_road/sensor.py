@@ -200,6 +200,9 @@ WEATHER_SENSOR_DEFINITIONS = {
         "state_class": SensorStateClass.MEASUREMENT,
         "icon": "mdi:current-ac",
     },
+    "VALLITSEVA_SÄÄ": {
+        "icon": "mdi:weather-partly-cloudy",
+    },
 }
 
 
@@ -656,7 +659,7 @@ class DigitraficWeatherMeasurementSensor(CoordinatorEntity, SensorEntity):
         if not measurement:
             return None
 
-        # Special handling for VALLITSEVA_SÄÄ - translate WMO code
+        # Special handling for VALLITSEVA_SÄÄ - translate WMO code to text
         if self.measurement_key == "VALLITSEVA_SÄÄ":
             value = measurement.get("value")
             if value is not None:
@@ -683,7 +686,11 @@ class DigitraficWeatherMeasurementSensor(CoordinatorEntity, SensorEntity):
         measurement = self._get_measurement()
         if not measurement:
             return None
-        return measurement.get("unit")
+        unit = measurement.get("unit")
+        # Filter out invalid/placeholder units
+        if unit in ("///", "???", "***"):
+            return None
+        return unit
 
     @property
     def extra_state_attributes(self) -> Dict[str, Any]:
@@ -696,9 +703,16 @@ class DigitraficWeatherMeasurementSensor(CoordinatorEntity, SensorEntity):
             "measured_time": measurement.get("measuredTime"),
         }
 
-        # For VALLITSEVA_SÄÄ, always include the raw WMO code
+        # For VALLITSEVA_SÄÄ, add translated description
         if self.measurement_key == "VALLITSEVA_SÄÄ":
-            attrs["wmo_code"] = measurement.get("value")
+            value = measurement.get("value")
+            attrs["wmo_code"] = value
+            if value is not None:
+                lang = self.coordinator.language or "fi"
+                attrs["weather_description"] = translate_wmo_code(value, lang)
+                # Add both language descriptions
+                attrs["weather_description_fi"] = translate_wmo_code(value, "fi")
+                attrs["weather_description_en"] = translate_wmo_code(value, "en")
 
         if not self._use_description:
             attrs["raw_value"] = measurement.get("value")
@@ -849,13 +863,16 @@ class DigitraficTmsMeasurementSensor(CoordinatorEntity, SensorEntity):
             if isinstance(m, dict) and "unit" in m:
                 unit = m.get("unit")
                 _LOGGER.debug("Unit for %s: %s", self.measure_key, unit)
-                # Handle special unit cases (°, km/h, %, kpl/h)
-                if unit == "***":
-                    return "%"  # Common placeholder for percentage
+                # Filter out invalid/placeholder units
+                if unit in ("///", "???", "***"):
+                    _LOGGER.debug("Filtering out invalid unit '%s' for %s", unit, self.measure_key)
+                    unit = None
                 # For speed measurements, ensure we have km/h
-                if "KESKINOPEUS" in self.measure_key and unit in ["km/h", "kmh", "km"]:
+                elif "KESKINOPEUS" in self.measure_key and unit in ["km/h", "kmh", "km"]:
                     return "km/h"
-                return unit
+                
+                if unit:
+                    return unit
                 
         # Default units based on measurement type
         if "KESKINOPEUS" in self.measure_key:
